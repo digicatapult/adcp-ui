@@ -20,6 +20,10 @@ export const CATALOGUE_CATEGORY_DETACH_URI = `${CATALOGUE_URI}/category/detach`
 export const PROFILER_URI = '/profiler'
 export const PROFILER_PROJECT_URI = `${PROFILER_URI}/project`
 export const PROFILER_PROJECT_SERVICES_URI = `${PROFILER_PROJECT_URI}/services`
+export const PROFILER_SOLUTION_TEMPLATE_URI = `${PROFILER_URI}/solution-template`
+export const PROFILER_SOLUTION_TEMPLATE_ADD_URI = `${PROFILER_SOLUTION_TEMPLATE_URI}/add`
+export const PROFILER_SOLUTION_TEMPLATE_EDIT_URI = `${PROFILER_SOLUTION_TEMPLATE_URI}/edit`
+export const PROFILER_SOLUTION_TEMPLATE_REMOVE_URI = `${PROFILER_SOLUTION_TEMPLATE_URI}/remove`
 
 export const ORCHESTRATOR_URI = '/orchestrator'
 
@@ -81,6 +85,22 @@ export const getProfilerSubNavigation = () => [
   {
     to: PROFILER_PROJECT_SERVICES_URI,
     name: 'Services',
+  },
+  {
+    to: PROFILER_SOLUTION_TEMPLATE_URI,
+    name: 'List Solution Templates',
+  },
+  {
+    to: PROFILER_SOLUTION_TEMPLATE_ADD_URI,
+    name: 'Add Solution Template',
+  },
+  {
+    to: PROFILER_SOLUTION_TEMPLATE_EDIT_URI,
+    name: 'Edit Solution Template',
+  },
+  {
+    to: PROFILER_SOLUTION_TEMPLATE_REMOVE_URI,
+    name: 'Remove Solution Template',
   },
 ]
 
