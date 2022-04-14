@@ -17,8 +17,8 @@ jobs:
           fetch-depth: 0
       - name: Check token
         run: |
-          if [ -z "${{ secrets.ADCP_GHCR_TOKEN }}"]; then
-            echo "Must provide a ADCP_GHCR_TOKEN secret in order to run release workflow"
+          if [ -z "${{ secrets.GITHUB_TOKEN }}"]; then
+            echo "Must provide a GITHUB_TOKEN secret in order to run release workflow"
             exit 1
           fi
       - name: Get repository identifiers
@@ -121,7 +121,7 @@ jobs:
         with:
           registry: ghcr.io
           username: $GITHUB_ACTOR
-          password: ${{ secrets.ADCP_GHCR_TOKEN }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish multi-arch image
         uses: docker/build-push-action@v2
         with:
@@ -131,7 +131,7 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64, linux/arm64
           secrets: |
-            github=${{ secrets.ADCP_GHCR_TOKEN }}
+            github=${{ secrets.GITHUB_TOKEN }}
           tags: |
             ghcr.io/${{ needs.preconditions.outputs.org_name }}/${{ needs.preconditions.outputs.repo_name }}:${{ needs.check-version.outputs.version }}
             ghcr.io/${{ needs.preconditions.outputs.org_name }}/${{ needs.preconditions.outputs.repo_name }}:latest
@@ -146,16 +146,30 @@ jobs:
 
       # Build github release
       - name: Build release version
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: softprops/action-gh-release@v1
         with:
-          repo_token: "${{ secrets.ADCP_GHCR_TOKEN }}"
-          automatic_release_tag: ${{ needs.check-version.outputs.version }}
+          token: '${{ secrets.GITHUB_TOKEN }}'
+          tag_name: ${{ needs.check-version.outputs.version }}
           prerelease: false
-          title: Release ${{ needs.check-version.outputs.version }}
+          name: ${{ needs.check-version.outputs.version }}
+          generate_release_notes: true
+      - name: Delete release latest
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const { owner, repo } = context.repo
+            try {
+              await github.rest.git.deleteRef({ owner, repo, ref: 'tags/latest' })
+            }
+            catch (err) {
+              if (err.status !== 422) throw err
+            }
       - name: Build release latest
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: softprops/action-gh-release@v1
         with:
-          repo_token: "${{ secrets.ADCP_GHCR_TOKEN }}"
-          automatic_release_tag: latest
+          token: '${{ secrets.GITHUB_TOKEN }}'
+          tag_name: latest
           prerelease: false
-          title: Latest Release ${{ needs.check-version.outputs.version }}
+          name: Latest ${{ needs.check-version.outputs.version }}
+          generate_release_notes: true
