@@ -1,7 +1,9 @@
-FROM node:16.14-alpine AS build
+ARG NODE_VERSION=16-alpine
+FROM node:$NODE_VERSION AS build
+
+RUN npm -g install npm@8.x.x
 
 WORKDIR /adcp-ui
-RUN npm i -g npm@8.5.0
 
 # Install base dependencies
 COPY . .
@@ -10,14 +12,18 @@ RUN npm install
 # RUN Build
 RUN npm run build
 
-
 ##################################################################################################
 
+FROM node:$NODE_VERSION AS runtime
 
-FROM nginx:1.18-alpine AS runtime
+RUN npm -g install npm@8.x.x
 
-WORKDIR /app/adcp-ui/build
+WORKDIR /adcp-ui
+ENV PORT 3000
 
 COPY --from=build /adcp-ui/build .
 
-CMD ["nginx", "-g", "daemon off;"]
+RUN npm install -g serve
+
+EXPOSE 3000
+CMD ["serve", "/adcp-ui"]
