@@ -1,16 +1,16 @@
 import * as React from 'react'
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 import uniqid from 'uniqid'
 
-import { CustomLink } from '../util/AppUtil'
+import { CustomSubNavLink } from '../util/AppUtil'
 
 const SubNavigation = ({ subNavList }) => {
   return (
     <Wrapper>
       {subNavList.map((item) => (
-        <CustomLink key={uniqid()} to={item.to}>
+        <CustomSubNavLink key={uniqid()} to={item.to}>
           {item.name}
-        </CustomLink>
+        </CustomSubNavLink>
       ))}
     </Wrapper>
   )
@@ -18,7 +18,7 @@ const SubNavigation = ({ subNavList }) => {
 
 const Wrapper = styled.div`
   grid-area: sub-navigation;
-  display: grid;
+  font-size: 1.1rem;
 `
 
 export default SubNavigation

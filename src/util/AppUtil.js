@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import * as React from 'react'
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 
 export const HOME_URI = '/'
 
@@ -106,10 +106,10 @@ export const getProfilerSubNavigation = () => [
 
 export const getOrchestratorSubNavigation = () => []
 
-export const CustomLink = ({ children, to, ...props }) => {
+const CustomLink = ({ children, to, ...props }) => {
   return (
     <NavElement>
-      <Link style={{ textDecoration: 'none', color: '#000' }} to={to} {...props}>
+      <Link to={to} {...props}>
         {children}
       </Link>
     </NavElement>
@@ -119,4 +119,18 @@ export const CustomLink = ({ children, to, ...props }) => {
 const NavElement = styled.div`
   margin: 8px 16px;
   color: #000;
+`
+
+export const CustomNavLink = styled(CustomLink)`
+  display: block;
+  color: #000;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline 3px;
+  }
+`
+
+export const CustomSubNavLink = styled(CustomNavLink)`
+  margin-bottom: 16px;
 `

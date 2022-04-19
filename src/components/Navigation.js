@@ -1,15 +1,15 @@
 import * as React from 'react'
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 
-import { CATALOGUE_URI, CustomLink, ORCHESTRATOR_URI, PROFILER_URI, REGISTRATION_URI } from '../util/AppUtil'
+import { CATALOGUE_URI, CustomNavLink, ORCHESTRATOR_URI, PROFILER_URI, REGISTRATION_URI } from '../util/AppUtil'
 
 const Navigation = () => {
   return (
     <Wrapper>
-      <CustomLink to={REGISTRATION_URI}>Registration</CustomLink>
-      <CustomLink to={CATALOGUE_URI}>Catalogue</CustomLink>
-      <CustomLink to={PROFILER_URI}>Profiler</CustomLink>
-      <CustomLink to={ORCHESTRATOR_URI}>Orchestrator</CustomLink>
+      <CustomNavLink to={REGISTRATION_URI}>Registration</CustomNavLink>
+      <CustomNavLink to={CATALOGUE_URI}>Catalogue</CustomNavLink>
+      <CustomNavLink to={PROFILER_URI}>Profiler</CustomNavLink>
+      <CustomNavLink to={ORCHESTRATOR_URI}>Orchestrator</CustomNavLink>
     </Wrapper>
   )
 }
@@ -17,7 +17,7 @@ const Navigation = () => {
 const Wrapper = styled.div`
   grid-area: navigation;
   display: grid;
-  grid-template-columns: repeat(4, auto);
+  grid-template-columns: repeat(4, min-content);
   justify-content: right;
 `
 

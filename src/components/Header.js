@@ -1,5 +1,5 @@
 import * as React from 'react'
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 import { useNavigate } from 'react-router-dom'
 
 import { HOME_URI } from '../util/AppUtil'
@@ -26,11 +26,12 @@ const Wrapper = styled.div`
   grid-area: header;
   display: grid;
   grid-template-areas: 'logo-wrapper navigation';
+  font-size: 1.1rem;
   padding: 16px;
   background-color: #9a9b9c;
 `
 
-const LogoWrapper = styled.span`
+const LogoWrapper = styled.div`
   grid-area: logo-wrapper;
   display: grid;
   grid-template-areas: 'logo';

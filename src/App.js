@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled from '@emotion/styled'
 
 import Header from './components/Header'
 import Routing from './router'
@@ -15,8 +15,6 @@ function App() {
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-columns: auto;
-  grid-template-rows: auto;
   grid-template-areas:
     'header'
     'main-wrapper';
