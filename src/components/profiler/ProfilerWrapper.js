@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from '@emotion/styled'
 
-import SubNavigation from './SubNavigation'
-import { getProfilerSubNavigation } from '../util/AppUtil'
+import SubNavigation from './../SubNavigation'
+import { getProfilerSubNavigation } from '../../util/AppUtil'
 import Profiler from './Profiler'
 
 const ProfilerWrapper = () => {

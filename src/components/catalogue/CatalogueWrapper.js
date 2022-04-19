@@ -1,17 +1,17 @@
 import React from 'react'
 import styled from '@emotion/styled'
 
-import SubNavigation from './SubNavigation'
-import Registration from './Registration'
-import { getRegistrationSubNavigation } from '../util/AppUtil'
+import SubNavigation from './../SubNavigation'
+import { getCatalogueSubNavigation } from '../../util/AppUtil'
+import Catalogue from './Catalogue'
 
-const RegistrationWrapper = () => {
-  const subNavList = getRegistrationSubNavigation()
+const CatalogueWrapper = () => {
+  const subNavList = getCatalogueSubNavigation()
 
   return (
     <Wrapper>
       <SubNavigation subNavList={subNavList} />
-      <Registration />
+      <Catalogue />
     </Wrapper>
   )
 }
@@ -23,4 +23,4 @@ const Wrapper = styled.div`
   padding: 48px;
 `
 
-export default RegistrationWrapper
+export default CatalogueWrapper

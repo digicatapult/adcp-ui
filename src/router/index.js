@@ -1,10 +1,10 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 
-import RegistrationWrapper from '../components/RegistrationWrapper'
-import CatalogueWrapper from '../components/CatalogueWrapper'
-import ProfilerWrapper from '../components/ProfilerWrapper'
-import OrchestratorWrapper from '../components/OrchestratorWrapper'
+import RegistrationWrapper from '../components/registration/RegistrationWrapper'
+import CatalogueWrapper from '../components/catalogue/CatalogueWrapper'
+import ProfilerWrapper from '../components/profiler/ProfilerWrapper'
+import OrchestratorWrapper from '../components/orchestrator/OrchestratorWrapper'
 import { CATALOGUE_URI, HOME_URI, ORCHESTRATOR_URI, PROFILER_URI, REGISTRATION_URI } from '../util/AppUtil'
 
 const Routing = () => {
