@@ -18,6 +18,8 @@ const SubNavigation = ({ subNavList }) => {
 
 const Wrapper = styled.div`
   grid-area: sub-navigation;
+  display: grid;
+  grid-auto-rows: 32px;
   font-size: 1.1rem;
 `
 
