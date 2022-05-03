@@ -30,7 +30,7 @@ const Wrapper = styled.div`
 const Content = styled.div`
   grid-area: main;
   display: grid;
-  //width: 100%;
+  //width: 100%;git status
   //height: 100%;
   justify-content: center;
 `
