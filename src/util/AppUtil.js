@@ -19,6 +19,7 @@ export const CATALOGUE_CATEGORY_DETACH_URI = `${CATALOGUE_URI}/category/detach`
 
 export const PROFILER_URI = '/profiler'
 export const PROFILER_PROJECT_URI = `${PROFILER_URI}/project`
+export const PROFILER_PROJECT_ADD_URI = `${PROFILER_URI}/project/add`
 export const PROFILER_PROJECT_SERVICES_URI = `${PROFILER_PROJECT_URI}/services`
 export const PROFILER_SOLUTION_TEMPLATE_URI = `${PROFILER_URI}/solution-template`
 export const PROFILER_SOLUTION_TEMPLATE_ADD_URI = `${PROFILER_SOLUTION_TEMPLATE_URI}/add`
@@ -81,6 +82,10 @@ export const getProfilerSubNavigation = () => [
   {
     to: PROFILER_PROJECT_URI,
     name: 'Project',
+  },
+  {
+    to: PROFILER_PROJECT_ADD_URI,
+    name: 'Add Project',
   },
   {
     to: PROFILER_PROJECT_SERVICES_URI,
