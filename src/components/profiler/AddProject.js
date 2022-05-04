@@ -19,6 +19,7 @@ import uniqid from 'uniqid'
 // TODO remove default mui behvaiour/styling on radio button change
 // TODO create reusable components and move into ComponentUtil passing in props
 // TODO move constants to util
+// TODO formik integration https://formik.org/docs/examples/with-material-ui
 const RADIO_BUTTON_ENUMS = {
   select: 'SELECT',
   create: 'CREATE',
