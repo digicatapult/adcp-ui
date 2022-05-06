@@ -68,7 +68,6 @@ const AddProject = () => {
     <Wrapper>
       <SubNavigation subNavList={getProfilerSubNavigation()} />
       <Content onSubmit={formik.handleSubmit}>
-        {/*<FormWrapper onSubmit={formik.handleSubmit}>*/}
         <ClientDetailsLabelWrapper styles={{ fontSize: '1.5rem' }}>Client Details:</ClientDetailsLabelWrapper>
         <ClientRadioGroupWrapper
           aria-labelledby="client-radio-buttons-group"
@@ -259,7 +258,7 @@ const Wrapper = styled.div`
 const Content = styled.form`
   grid-area: main;
   display: grid;
-  grid-row-gap: 32px;
+  grid-row-gap: 24px;
   grid-auto-rows: min-content;
   justify-content: center;
   grid-template-areas:
@@ -301,7 +300,6 @@ const ClientFieldsWrapper = styled.div`
   grid-template-areas:
     'client-first-name-wrapper client-last-name-wrapper'
     'client-company-wrapper client-role-wrapper';
-  padding-bottom: 32px;
 `
 
 const ClientDetailsLabelWrapper = styled(FormTextLabel)`
@@ -343,10 +341,12 @@ const ProjectDetailsLabelWrapper = styled(FormTextLabel)`
 
 const ProjectNameWrapper = styled.div`
   grid-area: project-name-wrapper;
+  padding-top: 16px;
 `
 
 const ProjectDescriptionWrapper = styled.div`
   grid-area: project-description-wrapper;
+  padding-top: 16px;
 `
 
 const ProjectDatesWrapper = styled.div`
