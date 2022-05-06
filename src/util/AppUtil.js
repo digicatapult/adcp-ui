@@ -1,5 +1,5 @@
+import React from 'react'
 import { Link } from 'react-router-dom'
-import * as React from 'react'
 import styled from '@emotion/styled'
 
 export const HOME_URI = '/'
