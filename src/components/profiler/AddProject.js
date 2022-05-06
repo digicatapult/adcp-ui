@@ -275,7 +275,7 @@ const ClientRadioGroupWrapper = styled(RadioGroup)`
   grid-area: client-radio-group-wrapper;
   display: grid;
   grid-column-gap: 16px;
-  grid-template-columns: 150px 340px;
+  grid-template-columns: 170px 340px;
   grid-template-areas: 'client-radio-buttons-wrapper client-select-wrapper';
 `
 

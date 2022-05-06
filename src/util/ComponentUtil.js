@@ -30,7 +30,11 @@ export const validationSchema = yup.object({
 })
 
 export const FormRadioButtonLabel = ({ label, value }) => (
-  <FormRadioButtonLabelStyles control={<FormRadioButtonStyles />} label={label} value={value} />
+  <FormRadioButtonLabelStyles
+    control={<Radio />}
+    label={<FormTextLabelStyles styles={{ fontSize: '1.2rem', lineHeight: '1rem' }}>{label}</FormTextLabelStyles>}
+    value={value}
+  />
 )
 
 export const FormSelect = ({ clients, defaultValue, disabled, id, name, value, onChangeHandler, error }) => (
@@ -81,7 +85,6 @@ export const FormInputError = ({ children, styles }) => (
 export const FormDatePicker = ({ id, name, value, onChangeHandler, error, styles }) => (
   <FormDatePickerStyles
     type="date"
-    placeholder="dd/mm/yyyy"
     id={id}
     name={name}
     value={value}
@@ -92,7 +95,7 @@ export const FormDatePicker = ({ id, name, value, onChangeHandler, error, styles
 )
 
 export const FormButton = ({ variant, type, styles, children }) => (
-  <FormButtonStyles variant={variant} type={type} styles={styles} className="ME">
+  <FormButtonStyles variant={variant} type={type} styles={styles}>
     {children}
   </FormButtonStyles>
 )
@@ -101,18 +104,15 @@ const FormSelectStyles = styled(Select)`
   height: 56px;
 `
 
-const FormRadioButtonStyles = styled(Radio)`
-  font-size: 40px;
-`
-
 const FormRadioButtonLabelStyles = styled(FormControlLabel)`
-  font-size: 40px;
+  font-size: 1.4rem;
 `
 
 const FormTextLabelStyles = styled.div`
   height: 16px;
   font-size: ${({ styles }) => (styles ? styles.fontSize : '1.1rem')};
   font-weight: ${({ styles }) => (styles ? styles.fontWeight : '0')};
+  line-height: ${({ styles }) => (styles ? styles.lineHeight : '0rem')};
   color: ${({ styles }) => (styles ? styles.color : '#333')};
 `
 
@@ -134,7 +134,6 @@ const FormDatePickerStyles = styled(TextField)`
   height: ${({ styles }) => (styles ? styles.height : '56px')};
   margin: ${({ styles }) => (styles ? styles.margin : '8px 0px')};
   font-size: 1rem;
-  color: #000;
 `
 
 const FormButtonStyles = styled(Button)`
