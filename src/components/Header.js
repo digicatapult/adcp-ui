@@ -14,7 +14,7 @@ const Header = () => {
 
   return (
     <Wrapper>
-      <LogoWrapper>
+      <LogoWrapper styles={{ padding: '32px' }}>
         <Logo onClick={(e) => onClickHandler(e, HOME_URI)}>Logo</Logo>
       </LogoWrapper>
       <Navigation />
@@ -27,7 +27,6 @@ const Wrapper = styled.div`
   display: grid;
   grid-template-areas: 'logo-wrapper navigation';
   font-size: 1.1rem;
-  padding: 16px;
   background-color: #9a9b9c;
 `
 
@@ -36,7 +35,7 @@ const LogoWrapper = styled.div`
   display: grid;
   grid-template-areas: 'logo';
   justify-content: left;
-  margin: 8px 16px;
+  padding: ${({ styles }) => (styles ? styles.padding : '0px')};
 `
 
 const Logo = styled.div`

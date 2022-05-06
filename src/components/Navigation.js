@@ -6,10 +6,18 @@ import { CATALOGUE_URI, CustomNavLink, ORCHESTRATOR_URI, PROFILER_URI, REGISTRAT
 const Navigation = () => {
   return (
     <Wrapper>
-      <CustomNavLink to={REGISTRATION_URI}>Registration</CustomNavLink>
-      <CustomNavLink to={CATALOGUE_URI}>Catalogue</CustomNavLink>
-      <CustomNavLink to={PROFILER_URI}>Profiler</CustomNavLink>
-      <CustomNavLink to={ORCHESTRATOR_URI}>Orchestrator</CustomNavLink>
+      <CustomNavLink to={REGISTRATION_URI} styles={{ margin: '32px' }}>
+        Registration
+      </CustomNavLink>
+      <CustomNavLink to={CATALOGUE_URI} styles={{ margin: '32px' }}>
+        Catalogue
+      </CustomNavLink>
+      <CustomNavLink to={PROFILER_URI} styles={{ margin: '32px' }}>
+        Profiler
+      </CustomNavLink>
+      <CustomNavLink to={ORCHESTRATOR_URI} styles={{ margin: '32px' }}>
+        Orchestrator
+      </CustomNavLink>
     </Wrapper>
   )
 }

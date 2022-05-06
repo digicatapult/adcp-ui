@@ -111,9 +111,9 @@ export const getProfilerSubNavigation = () => [
 
 export const getOrchestratorSubNavigation = () => []
 
-const CustomLink = ({ children, to, ...props }) => {
+const CustomLink = ({ to, styles, children, ...props }) => {
   return (
-    <NavElement>
+    <NavElement styles={styles}>
       <Link to={to} {...props}>
         {children}
       </Link>
@@ -122,12 +122,11 @@ const CustomLink = ({ children, to, ...props }) => {
 }
 
 const NavElement = styled.div`
-  margin: 8px 16px;
+  margin: ${({ styles }) => (styles ? styles.margin : '0px')};
   color: #000;
 `
 
 export const CustomNavLink = styled(CustomLink)`
-  display: block;
   color: #000;
   text-decoration: none;
 
@@ -136,6 +135,4 @@ export const CustomNavLink = styled(CustomLink)`
   }
 `
 
-export const CustomSubNavLink = styled(CustomNavLink)`
-  margin-bottom: 16px;
-`
+export const CustomSubNavLink = styled(CustomNavLink)``

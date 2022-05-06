@@ -16,14 +16,17 @@ const Profiler = () => {
 const Wrapper = styled.div`
   grid-area: main-wrapper;
   display: grid;
+  grid-template-columns: 330px auto;
   grid-template-areas: 'sub-navigation main';
-  padding: 48px;
+  height: 100%;
 `
 
 const Content = styled.div`
   grid-area: main;
   display: grid;
   justify-content: center;
+  height: 100%;
+  padding: 64px;
 `
 
 export default Profiler

@@ -6,9 +6,9 @@ import { CustomSubNavLink } from '../util/AppUtil'
 
 const SubNavigation = ({ subNavList }) => {
   return (
-    <Wrapper>
+    <Wrapper rows={subNavList.length}>
       {subNavList.map((item) => (
-        <CustomSubNavLink key={uniqid()} to={item.to}>
+        <CustomSubNavLink key={uniqid()} to={item.to} styles={{ margin: '48px' }}>
           {item.name}
         </CustomSubNavLink>
       ))}
@@ -18,7 +18,10 @@ const SubNavigation = ({ subNavList }) => {
 
 const Wrapper = styled.div`
   grid-area: sub-navigation;
-  font-size: 1.1rem;
+  display: grid;
+  grid-template-rows: repeat(${({ rows }) => rows}, 48px);
+  font-size: 1.2rem;
+  background-color: #ccc;
 `
 
 export default SubNavigation

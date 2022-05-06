@@ -92,7 +92,7 @@ export const FormDatePicker = ({ id, name, value, onChangeHandler, error, styles
 )
 
 export const FormButton = ({ variant, type, styles, children }) => (
-  <FormButtonStyles variant={variant} type={type} styles={styles}>
+  <FormButtonStyles variant={variant} type={type} styles={styles} className="ME">
     {children}
   </FormButtonStyles>
 )
