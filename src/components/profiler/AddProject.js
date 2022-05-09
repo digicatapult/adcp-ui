@@ -92,11 +92,11 @@ const AddProject = () => {
               error={formik.touched.clientId && Boolean(formik.errors.clientId)}
             />
             {clients.length > 0 ? (
-              <FormInputError styles={{ padding: '18px' }}>
+              <FormInputError styles={{ padding: '24px 18px 0px 0px' }}>
                 {disableCreateClientFields && formik.touched.clientId && formik.errors.clientId && 'Client is required'}
               </FormInputError>
             ) : (
-              <FormInputError styles={{ padding: '18px' }}>There are no clients</FormInputError>
+              <FormInputError styles={{ padding: '24px 18px 0px 0px' }}>There are no clients</FormInputError>
             )}
           </ClientSelectWrapper>
         </ClientRadioGroupWrapper>
@@ -274,7 +274,7 @@ const ClientRadioGroupWrapper = styled(RadioGroup)`
   grid-area: client-radio-group-wrapper;
   display: grid;
   grid-column-gap: 16px;
-  grid-template-columns: 170px 340px;
+  grid-template-columns: 170px auto;
   grid-template-areas: 'client-radio-buttons-wrapper client-select-wrapper';
 `
 
@@ -288,7 +288,7 @@ const ClientRadioButtonsWrapper = styled.div`
 const ClientSelectWrapper = styled.div`
   grid-area: client-select-wrapper;
   display: grid;
-  grid-template-columns: 300px 200px;
+  grid-template-rows: 40px 16px;
 `
 
 const ClientFieldsWrapper = styled.div`
