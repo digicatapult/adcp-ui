@@ -300,6 +300,7 @@ const ClientFieldsWrapper = styled.div`
   grid-template-areas:
     'client-first-name-wrapper client-last-name-wrapper'
     'client-company-wrapper client-role-wrapper';
+  margin-bottom: 16px;
 `
 
 const ClientDetailsLabelWrapper = styled(FormTextLabel)`
