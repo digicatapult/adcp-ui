@@ -27,7 +27,8 @@ const Wrapper = styled.div`
   display: grid;
   grid-template-areas: 'logo-wrapper navigation';
   font-size: 1.1rem;
-  background-color: #9a9b9c;
+  font-weight: 600;
+  background-color: #959596;
 `
 
 const LogoWrapper = styled.div`

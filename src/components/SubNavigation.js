@@ -19,9 +19,10 @@ const SubNavigation = ({ subNavList }) => {
 const Wrapper = styled.div`
   grid-area: sub-navigation;
   display: grid;
-  grid-template-rows: repeat(${({ rows }) => rows}, 48px);
-  font-size: 1.2rem;
-  background-color: #ccc;
+  grid-template-rows: repeat(${({ rows }) => rows}, 40px);
+  font-size: 1.1rem;
+  font-weight: 600;
+  background-color: #bababb;
 `
 
 export default SubNavigation

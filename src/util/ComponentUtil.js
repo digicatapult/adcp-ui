@@ -15,7 +15,7 @@ export const validationSchema = yup.object().shape(
   {
     clientId: yup.string().when('firstName', {
       is: (firstName) => !firstName,
-      then: yup.string().uuid().required('Client is required'),
+      then: yup.string().uuid('Client is Required').required('Client is required'),
       otherwise: yup.string(),
     }),
     firstName: yup.string().when('clientId', {
@@ -44,10 +44,15 @@ export const validationSchema = yup.object().shape(
       then: yup.string().min(2, 'Role should be of 2 - 50 characters length'),
       otherwise: yup.string().min(2, 'Role should be of 2 - 50 characters length').required('Role is required'),
     }),
-    name: yup
-      .string('Enter your name')
-      .min(2, 'Name should be of 2 - 50 characters length')
-      .required('Name is required'),
+    name: yup.string().min(2, 'Name should be of 2 - 50 characters length').required('Name is required'),
+    description: yup
+      .string()
+      .min(2, 'Description should be of 2 - 50 characters length')
+      .required('Description is required'),
+    budget: yup.number().nullable(),
+    startDate: yup.date().nullable(),
+    endDate: yup.date().nullable(),
+    documentUrl: yup.string().nullable(),
   },
   [
     ['firstName', 'clientId'],

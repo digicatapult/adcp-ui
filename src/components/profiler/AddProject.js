@@ -3,9 +3,11 @@ import styled from '@emotion/styled'
 import { useFormik } from 'formik'
 import { RadioGroup } from '@mui/material'
 import uniqid from 'uniqid'
+import * as yup from 'yup'
+import moment from 'moment'
 
 import SubNavigation from './../SubNavigation'
-import { getClientsApi, getProfilerSubNavigation } from '../../util/AppUtil'
+import { getClientsApi, getProfilerSubNavigation, postProjectApi } from '../../util/AppUtil'
 import {
   FormButton,
   FormDatePicker,
@@ -37,12 +39,63 @@ const AddProject = () => {
       description: '',
       startDate: '',
       endDate: '',
-      budget: '',
+      budget: 0.0,
       documentUrl: '',
     },
     validationSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2))
+    onSubmit: async (values) => {
+      let response = {}
+
+      console.log('values', values)
+
+      const startDate = moment(values.startDate, 'YYYY-MM-DD').isValid()
+        ? moment(values.startDate, 'YYYY-MM-DD').toISOString()
+        : null
+      const endDate = moment(values.endDate, 'YYYY-MM-DD').isValid()
+        ? moment(values.endDate, 'YYYY-MM-DD').toISOString()
+        : null
+
+      if (await yup.string().uuid().isValid(values.clientId)) {
+        const { clientId, name, description, budget, documentUrl } = values
+
+        response = await postProjectApi({
+          clientId,
+          name,
+          description,
+          budget,
+          startDate,
+          endDate,
+          documentUrl,
+        })
+      } else {
+        const { firstName, lastName, name, company, role, description, budget, startDate, endDate, documentUrl } =
+          values
+
+        response = await postProjectApi({
+          firstName,
+          lastName,
+          name,
+          company,
+          role,
+          description,
+          budget,
+          startDate,
+          endDate,
+          documentUrl,
+        })
+      }
+
+      if (response.ok) {
+        window.location.reload()
+      } else {
+        const statusCode = response.status
+
+        if (statusCode === 409) {
+          formik.errors.name = 'Name already exists!'
+        } else if (statusCode === 404) {
+          formik.errors.clientId = 'Client does not exist!'
+        }
+      }
     },
   })
 
@@ -125,11 +178,7 @@ const AddProject = () => {
             />
             {clients.length > 0 ? (
               <FormInputError key={uniqid()} styles={{ padding: '24px 18px 0px 0px', color: '#ff0000' }}>
-                {clientsLoaded &&
-                  disableCreateClientFields &&
-                  formik.touched.clientId &&
-                  formik.errors.clientId &&
-                  'Client is required'}
+                {clientsLoaded && disableCreateClientFields && formik.touched.clientId && formik.errors.clientId}
               </FormInputError>
             ) : (
               <FormInputError key={uniqid()} styles={{ padding: '24px 18px 0px 0px', color: '#000' }}>
