@@ -46,8 +46,6 @@ const AddProject = () => {
     onSubmit: async (values) => {
       let response = {}
 
-      console.log('values', values)
-
       const startDate = moment(values.startDate, 'YYYY-MM-DD').isValid()
         ? moment(values.startDate, 'YYYY-MM-DD').toISOString()
         : null
@@ -138,12 +136,6 @@ const AddProject = () => {
     formik.setFieldValue('company', '')
     formik.setFieldValue('role', '')
   }
-
-  console.log('clients', clients)
-  console.log('clientsLoaded', clientsLoaded)
-  console.log('clientRadioButtonValue', clientRadioButtonValue)
-  console.log('disableCreateClientFields', disableCreateClientFields)
-  console.log('formik.errors', formik.errors)
 
   return (
     <Wrapper>

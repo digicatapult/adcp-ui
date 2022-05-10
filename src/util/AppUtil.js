@@ -184,7 +184,6 @@ export const getClientsApi = async () => {
 
 export const postProjectApi = async (project) => {
   const apiPrefix = `http://${PROFILER_API_HOST}:${PROFILER_API_PORT}/${PROFILER_API_URI_PREFIX}/profiler/project`
-  console.log('API PREFIX', apiPrefix)
 
   return fetch(`${apiPrefix}`, {
     method: 'POST',
