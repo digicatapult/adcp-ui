@@ -20,7 +20,13 @@ export const CATALOGUE_CATEGORY_DETACH_URI = `${CATALOGUE_URI}/category/detach`
 export const PROFILER_URI = '/profiler'
 export const PROFILER_PROJECT_URI = `${PROFILER_URI}/project`
 export const PROFILER_PROJECT_ADD_URI = `${PROFILER_URI}/project/add`
+export const PROFILER_PROJECT_EDIT_URI = `${PROFILER_URI}/project/edit`
+export const PROFILER_PROJECT_REMOVE_URI = `${PROFILER_URI}/project/remove`
 export const PROFILER_PROJECT_SERVICES_URI = `${PROFILER_PROJECT_URI}/services`
+export const PROFILER_CLIENT_URI = `${PROFILER_PROJECT_URI}/client`
+export const PROFILER_CLIENT_ADD_URI = `${PROFILER_PROJECT_URI}/client/add`
+export const PROFILER_CLIENT_EDIT_URI = `${PROFILER_PROJECT_URI}/client/edit`
+export const PROFILER_CLIENT_REMOVE_URI = `${PROFILER_PROJECT_URI}/client/remove`
 export const PROFILER_SOLUTION_TEMPLATE_URI = `${PROFILER_URI}/solution-template`
 export const PROFILER_SOLUTION_TEMPLATE_ADD_URI = `${PROFILER_SOLUTION_TEMPLATE_URI}/add`
 export const PROFILER_SOLUTION_TEMPLATE_EDIT_URI = `${PROFILER_SOLUTION_TEMPLATE_URI}/edit`
@@ -81,15 +87,39 @@ export const getCatalogueSubNavigation = () => [
 export const getProfilerSubNavigation = () => [
   {
     to: PROFILER_PROJECT_URI,
-    name: 'Project',
+    name: 'List Projects',
+  },
+  {
+    to: PROFILER_PROJECT_SERVICES_URI,
+    name: 'List Project Services',
   },
   {
     to: PROFILER_PROJECT_ADD_URI,
     name: 'Add Project',
   },
   {
-    to: PROFILER_PROJECT_SERVICES_URI,
-    name: 'Services',
+    to: PROFILER_PROJECT_EDIT_URI,
+    name: 'Edit Project',
+  },
+  {
+    to: PROFILER_PROJECT_REMOVE_URI,
+    name: 'Remove Project',
+  },
+  {
+    to: PROFILER_CLIENT_URI,
+    name: 'List Clients',
+  },
+  {
+    to: PROFILER_CLIENT_ADD_URI,
+    name: 'Add Client',
+  },
+  {
+    to: PROFILER_CLIENT_EDIT_URI,
+    name: 'Edit Client',
+  },
+  {
+    to: PROFILER_CLIENT_REMOVE_URI,
+    name: 'Remove Client',
   },
   {
     to: PROFILER_SOLUTION_TEMPLATE_URI,
@@ -136,3 +166,31 @@ export const CustomNavLink = styled(CustomLink)`
 `
 
 export const CustomSubNavLink = styled(CustomNavLink)``
+
+const PROFILER_API_HOST = process.env.REACT_APP_PROFILER_API_HOST || 'localhost'
+const PROFILER_API_PORT = process.env.REACT_APP_PROFILER_API_PORT || 3001
+const PROFILER_API_URI_PREFIX = process.env.REACT_APP_PROFILER_API_URI_PREFIX || 'v1'
+
+export const getClientsApi = async () => {
+  const apiPrefix = `http://${PROFILER_API_HOST}:${PROFILER_API_PORT}/${PROFILER_API_URI_PREFIX}/profiler/client`
+
+  return fetch(`${apiPrefix}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+}
+
+export const postProjectApi = async (project) => {
+  const apiPrefix = `http://${PROFILER_API_HOST}:${PROFILER_API_PORT}/${PROFILER_API_URI_PREFIX}/profiler/project`
+  console.log('API PREFIX', apiPrefix)
+
+  return fetch(`${apiPrefix}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(project),
+  })
+}

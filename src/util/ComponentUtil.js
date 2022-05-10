@@ -11,49 +11,71 @@ export const RADIO_BUTTON_ENUMS = {
   create: 'CREATE',
 }
 
-export const validationSchema = yup.object({
-  clientId: yup.number('hi').required('Client is required'),
-  firstName: yup
-    .string('Enter your first name')
-    .min(2, 'First name should be of 2 - 50 characters length')
-    .required('First name is required'),
-  lastName: yup
-    .string('Enter your last name')
-    .min(2, 'Last name should be of 2 - 50 characters length')
-    .required('Last name is required'),
-  company: yup
-    .string('Enter your company')
-    .min(2, 'Company should be of 2 - 50 characters length')
-    .required('Company is required'),
-  role: yup.string('Enter your role').min(2, 'Role should be of 2 - 50 characters length').required('Role is required'),
-  name: yup.string('Enter your name').min(2, 'Name should be of 2 - 50 characters length').required('Name is required'),
-})
+export const validationSchema = yup.object().shape(
+  {
+    clientId: yup.string().when('firstName', {
+      is: (firstName) => !firstName,
+      then: yup.string().uuid().required('Client is required'),
+      otherwise: yup.string(),
+    }),
+    firstName: yup.string().when('clientId', {
+      is: (clientId) => clientId !== SELECT_CLIENT_DEFAULT_VALUE,
+      then: yup.string().min(2, 'First name should be of 2 - 50 characters length'),
+      otherwise: yup
+        .string()
+        .min(2, 'First name should be of 2 - 50 characters length')
+        .required('First name is required'),
+    }),
+    lastName: yup.string().when('clientId', {
+      is: (clientId) => clientId !== SELECT_CLIENT_DEFAULT_VALUE,
+      then: yup.string().min(2, 'Last name should be of 2 - 50 characters length'),
+      otherwise: yup
+        .string()
+        .min(2, 'Last name should be of 2 - 50 characters length')
+        .required('Last name is required'),
+    }),
+    company: yup.string().when('clientId', {
+      is: (clientId) => clientId !== SELECT_CLIENT_DEFAULT_VALUE,
+      then: yup.string().min(2, 'Company should be of 2 - 50 characters length'),
+      otherwise: yup.string().min(2, 'Company should be of 2 - 50 characters length').required(),
+    }),
+    role: yup.string().when('clientId', {
+      is: (clientId) => clientId !== SELECT_CLIENT_DEFAULT_VALUE,
+      then: yup.string().min(2, 'Role should be of 2 - 50 characters length'),
+      otherwise: yup.string().min(2, 'Role should be of 2 - 50 characters length').required('Role is required'),
+    }),
+    name: yup
+      .string('Enter your name')
+      .min(2, 'Name should be of 2 - 50 characters length')
+      .required('Name is required'),
+  },
+  [
+    ['firstName', 'clientId'],
+    ['clientId', 'firstName'],
+    ['clientId', 'lastName'],
+    ['clientId', 'company'],
+    ['clientId', 'role'],
+  ]
+)
 
-export const FormRadioButtonLabel = ({ label, value }) => (
+export const FormRadioButtonLabel = ({ label, value, disabled }) => (
   <FormRadioButtonLabelStyles
     control={<Radio />}
     label={<FormTextLabelStyles styles={{ fontSize: '1.2rem', lineHeight: '1rem' }}>{label}</FormTextLabelStyles>}
     value={value}
+    disabled={disabled}
   />
 )
 
 export const FormSelect = ({ clients, defaultValue, disabled, id, name, value, onChangeHandler, error }) => (
-  <FormSelectStyles
-    displayEmpty
-    disabled={disabled}
-    id={id}
-    name={name}
-    value={value}
-    onChange={onChangeHandler}
-    error={error}
-  >
+  <FormSelectStyles disabled={disabled} id={id} name={name} value={value} onChange={onChangeHandler} error={error}>
     <MenuItem disabled value={defaultValue}>
       <em>{defaultValue}</em>
     </MenuItem>
     {clients.map((item) => (
       <MenuItem key={uniqid()} value={item.id}>
         <em>
-          {item.lastName}, {item.firstName} - {item.company}
+          {item.lastName}, {item.firstName} | {item.company}
         </em>
       </MenuItem>
     ))}
@@ -117,7 +139,7 @@ const FormTextLabelStyles = styled.div`
 `
 
 const FormInputStyles = styled(TextField)`
-  width: ${({ styles }) => (styles ? styles.width : '300px')};
+  width: ${({ styles }) => (styles ? styles.width : '310px')};
   height: 56px;
   margin: ${({ styles }) => (styles ? styles.margin : '8px 0px')};
   font-size: 1rem;
@@ -127,7 +149,7 @@ const FormInputErrorStyles = styled.div`
   height: 16px;
   padding: ${({ styles }) => (styles ? styles.padding : '0px')};
   font-size: 0.9rem;
-  color: #ff0000;
+  color: ${({ styles }) => (styles ? styles.color : '#ff0000')};
 `
 
 const FormDatePickerStyles = styled(TextField)`

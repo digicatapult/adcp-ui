@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react'
 import styled from '@emotion/styled'
 import { useFormik } from 'formik'
 import { RadioGroup } from '@mui/material'
+import uniqid from 'uniqid'
 
 import SubNavigation from './../SubNavigation'
-import { getProfilerSubNavigation } from '../../util/AppUtil'
+import { getClientsApi, getProfilerSubNavigation } from '../../util/AppUtil'
 import {
   FormButton,
   FormDatePicker,
@@ -19,16 +20,11 @@ import {
 } from '../../util/ComponentUtil'
 
 const AddProject = () => {
-  // TODO replace with API call: GET /v1/profiler/project/client
-  const clients = [{ id: '1', firstName: 'First name 1', lastName: 'Last name 1', company: 'Company 1' }]
+  const [clients, setClients] = useState([])
+  const [clientsLoaded, setClientsLoaded] = useState(false)
+  const [clientRadioButtonValue, setClientRadioButtonValue] = useState('')
 
-  const [selectedClient, setSelectedClient] = useState(SELECT_CLIENT_DEFAULT_VALUE)
-  const [clientRadioButtonValue, setClientRadioButtonValue] = useState(
-    clients.length > 0 ? RADIO_BUTTON_ENUMS.select : RADIO_BUTTON_ENUMS.create
-  )
-  const [disableCreateClientFields, setDisableCreateClientFields] = useState(
-    clientRadioButtonValue === RADIO_BUTTON_ENUMS.select
-  )
+  const disableCreateClientFields = clients.length > 0 && clientRadioButtonValue === RADIO_BUTTON_ENUMS.select
 
   const formik = useFormik({
     initialValues: {
@@ -50,19 +46,51 @@ const AddProject = () => {
     },
   })
 
-  useEffect(() => {}, [clientRadioButtonValue, disableCreateClientFields, selectedClient])
+  const getClients = async () => {
+    const result = await getClientsApi()
+
+    const response = await result.json()
+
+    if (response) {
+      setClientsLoaded(true)
+
+      if (response.length === 0) {
+        setClientRadioButtonValue(RADIO_BUTTON_ENUMS.create)
+      } else {
+        setClientRadioButtonValue(RADIO_BUTTON_ENUMS.select)
+      }
+
+      setClients(response)
+    }
+  }
+
+  useEffect(() => {
+    if (!clientsLoaded) {
+      getClients()
+    }
+  }, [clientsLoaded, clients, clientRadioButtonValue])
 
   const clientRadioButtonHandler = (e) => {
     const { value } = e.target
 
-    setClientRadioButtonValue(
-      value === RADIO_BUTTON_ENUMS.select ? RADIO_BUTTON_ENUMS.select : RADIO_BUTTON_ENUMS.create
-    )
-    setSelectedClient(SELECT_CLIENT_DEFAULT_VALUE)
-    formik.setFieldValue('clientId', SELECT_CLIENT_DEFAULT_VALUE)
+    if (value === RADIO_BUTTON_ENUMS.select) {
+      setClientRadioButtonValue(RADIO_BUTTON_ENUMS.select)
+    } else {
+      setClientRadioButtonValue(RADIO_BUTTON_ENUMS.create)
+    }
 
-    setDisableCreateClientFields(value === RADIO_BUTTON_ENUMS.select)
+    formik.setFieldValue('clientId', SELECT_CLIENT_DEFAULT_VALUE)
+    formik.setFieldValue('firstName', '')
+    formik.setFieldValue('lastName', '')
+    formik.setFieldValue('company', '')
+    formik.setFieldValue('role', '')
   }
+
+  console.log('clients', clients)
+  console.log('clientsLoaded', clientsLoaded)
+  console.log('clientRadioButtonValue', clientRadioButtonValue)
+  console.log('disableCreateClientFields', disableCreateClientFields)
+  console.log('formik.errors', formik.errors)
 
   return (
     <Wrapper>
@@ -77,7 +105,11 @@ const AddProject = () => {
           onChange={clientRadioButtonHandler}
         >
           <ClientRadioButtonsWrapper>
-            <FormRadioButtonLabel label={`*${SELECT_CLIENT_DEFAULT_VALUE}`} value={RADIO_BUTTON_ENUMS.select} />
+            <FormRadioButtonLabel
+              label={`*${SELECT_CLIENT_DEFAULT_VALUE}`}
+              value={RADIO_BUTTON_ENUMS.select}
+              disabled={clients.length === 0}
+            />
             <FormRadioButtonLabel label="*Create Client" value={RADIO_BUTTON_ENUMS.create} />
           </ClientRadioButtonsWrapper>
           <ClientSelectWrapper>
@@ -92,11 +124,17 @@ const AddProject = () => {
               error={formik.touched.clientId && Boolean(formik.errors.clientId)}
             />
             {clients.length > 0 ? (
-              <FormInputError styles={{ padding: '24px 18px 0px 0px' }}>
-                {disableCreateClientFields && formik.touched.clientId && formik.errors.clientId && 'Client is required'}
+              <FormInputError key={uniqid()} styles={{ padding: '24px 18px 0px 0px', color: '#ff0000' }}>
+                {clientsLoaded &&
+                  disableCreateClientFields &&
+                  formik.touched.clientId &&
+                  formik.errors.clientId &&
+                  'Client is required'}
               </FormInputError>
             ) : (
-              <FormInputError styles={{ padding: '24px 18px 0px 0px' }}>There are no clients</FormInputError>
+              <FormInputError key={uniqid()} styles={{ padding: '24px 18px 0px 0px', color: '#000' }}>
+                {clientsLoaded && 'There are no clients, please create one.'}
+              </FormInputError>
             )}
           </ClientSelectWrapper>
         </ClientRadioGroupWrapper>
@@ -295,8 +333,8 @@ const ClientFieldsWrapper = styled.div`
   grid-area: client-fields-wrapper;
   display: grid;
   grid-row-gap: 24px;
-  grid-column-gap: 64px;
-  grid-template-columns: repeat(2, 300px);
+  grid-column-gap: 56px;
+  //grid-template-columns: repeat(2, 310px);
   grid-template-areas:
     'client-first-name-wrapper client-last-name-wrapper'
     'client-company-wrapper client-role-wrapper';
@@ -327,8 +365,8 @@ const ProjectFieldsWrapper = styled.div`
   grid-area: project-fields-wrapper;
   display: grid;
   grid-row-gap: 24px;
-  grid-column-gap: 64px;
-  grid-template-columns: repeat(2, 300px);
+  grid-column-gap: 56px;
+  //grid-template-columns: repeat(2, 310px);
   grid-template-areas:
     'project-name-wrapper project-description-wrapper'
     'project-dates-wrapper project-dates-wrapper'
