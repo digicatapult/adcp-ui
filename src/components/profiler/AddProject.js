@@ -16,6 +16,7 @@ import {
   FormSelect,
   FormTextInput,
   FormTextLabel,
+  PROJECT_DATE_FORMAT,
   RADIO_BUTTON_ENUMS,
   SELECT_CLIENT_DEFAULT_VALUE,
   validationSchema,
@@ -46,28 +47,29 @@ const AddProject = () => {
     onSubmit: async (values) => {
       let response = {}
 
-      const startDate = moment(values.startDate, 'YYYY-MM-DD').isValid()
-        ? moment(values.startDate, 'YYYY-MM-DD').toISOString()
+      const startDate = moment(values.startDate, PROJECT_DATE_FORMAT).isValid()
+        ? moment(values.startDate, PROJECT_DATE_FORMAT).toISOString()
         : null
-      const endDate = moment(values.endDate, 'YYYY-MM-DD').isValid()
-        ? moment(values.endDate, 'YYYY-MM-DD').toISOString()
+      const endDate = moment(values.endDate, PROJECT_DATE_FORMAT).isValid()
+        ? moment(values.endDate, PROJECT_DATE_FORMAT).toISOString()
         : null
 
+      const budget = !isNaN(values.budget) && parseFloat(values.budget) ? parseFloat(values.budget) : null
+
       if (await yup.string().uuid().isValid(values.clientId)) {
-        const { clientId, name, description, budget, documentUrl } = values
+        const { clientId, name, description, documentUrl } = values
 
         response = await postProjectApi({
           clientId,
           name,
           description,
-          budget,
           startDate,
           endDate,
+          budget,
           documentUrl,
         })
       } else {
-        const { firstName, lastName, name, company, role, description, budget, startDate, endDate, documentUrl } =
-          values
+        const { firstName, lastName, name, company, role, description, documentUrl } = values
 
         response = await postProjectApi({
           firstName,
@@ -184,7 +186,7 @@ const AddProject = () => {
             <FormTextLabel>*First name:</FormTextLabel>
             <FormTextInput
               disabled={disableCreateClientFields}
-              placeholder="First name"
+              placeholder="Enter first name"
               id="firstName"
               name="firstName"
               value={formik.values.firstName}
@@ -199,7 +201,7 @@ const AddProject = () => {
             <FormTextLabel>*Last name:</FormTextLabel>
             <FormTextInput
               disabled={disableCreateClientFields}
-              placeholder="Last name"
+              placeholder="Enter last name"
               id="lastName"
               name="lastName"
               value={formik.values.lastName}
@@ -214,7 +216,7 @@ const AddProject = () => {
             <FormTextLabel>*Company:</FormTextLabel>
             <FormTextInput
               disabled={disableCreateClientFields}
-              placeholder="Company"
+              placeholder="Enter company"
               id="company"
               name="company"
               value={formik.values.company}
@@ -229,7 +231,7 @@ const AddProject = () => {
             <FormTextLabel>*Role:</FormTextLabel>
             <FormTextInput
               disabled={disableCreateClientFields}
-              placeholder="Role"
+              placeholder="Enter role"
               id="role"
               name="role"
               value={formik.values.role}
@@ -244,7 +246,7 @@ const AddProject = () => {
           <ProjectNameWrapper>
             <FormTextLabel>*Name:</FormTextLabel>
             <FormTextInput
-              placeholder="Name"
+              placeholder="Enter name"
               id="name"
               name="name"
               value={formik.values.name}
@@ -254,9 +256,9 @@ const AddProject = () => {
             <FormInputError>{formik.touched.name && formik.errors.name}</FormInputError>
           </ProjectNameWrapper>
           <ProjectDescriptionWrapper>
-            <FormTextLabel>Description:</FormTextLabel>
+            <FormTextLabel>*Description:</FormTextLabel>
             <FormTextInput
-              placeholder="Description"
+              placeholder="Enter description"
               id="description"
               name="description"
               value={formik.values.description}
@@ -269,13 +271,13 @@ const AddProject = () => {
             <ProjectBudgetWrapper>
               <FormTextLabel>Budget:</FormTextLabel>
               <FormTextInput
-                placeholder="Budget"
+                placeholder="Enter budget"
                 id="budget"
                 name="budget"
                 value={formik.values.budget}
                 onChangeHandler={formik.handleChange}
                 error={formik.touched.budget && Boolean(formik.errors.budget)}
-                styles={{ width: '150px', margin: '8px 0px' }}
+                styles={{ width: '220px', margin: '8px 0px' }}
               />
               <FormInputError>{formik.touched.budget && formik.errors.budget}</FormInputError>
             </ProjectBudgetWrapper>
@@ -305,7 +307,7 @@ const AddProject = () => {
           <ProjectDocumentUrlWrapper>
             <FormTextLabel>Document url:</FormTextLabel>
             <FormTextInput
-              placeholder="Document url"
+              placeholder="Enter document url"
               id="documentUrl"
               name="documentUrl"
               value={formik.values.documentUrl}
@@ -375,7 +377,7 @@ const ClientFieldsWrapper = styled.div`
   display: grid;
   grid-row-gap: 24px;
   grid-column-gap: 56px;
-  //grid-template-columns: repeat(2, 310px);
+  grid-template-columns: repeat(2, 310px);
   grid-template-areas:
     'client-first-name-wrapper client-last-name-wrapper'
     'client-company-wrapper client-role-wrapper';
@@ -407,7 +409,7 @@ const ProjectFieldsWrapper = styled.div`
   display: grid;
   grid-row-gap: 24px;
   grid-column-gap: 56px;
-  //grid-template-columns: repeat(2, 310px);
+  grid-template-columns: repeat(2, 310px);
   grid-template-areas:
     'project-name-wrapper project-description-wrapper'
     'project-dates-wrapper project-dates-wrapper'
@@ -433,7 +435,8 @@ const ProjectDatesWrapper = styled.div`
   grid-area: project-dates-wrapper;
   display: grid;
   justify-content: center;
-  grid-column-gap: 64px;
+  grid-column-gap: 56px;
+  //grid-template-columns: repeat(3, 150px);
   grid-template-areas: 'project-budget-wrapper project-start-date-wrapper project-end-date-wrapper';
 `
 

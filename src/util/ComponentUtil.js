@@ -11,6 +11,8 @@ export const RADIO_BUTTON_ENUMS = {
   create: 'CREATE',
 }
 
+export const PROJECT_DATE_FORMAT = 'YYYY-MM-DD'
+
 export const validationSchema = yup.object().shape(
   {
     clientId: yup.string().when('firstName', {
@@ -37,7 +39,7 @@ export const validationSchema = yup.object().shape(
     company: yup.string().when('clientId', {
       is: (clientId) => clientId !== SELECT_CLIENT_DEFAULT_VALUE,
       then: yup.string().min(2, 'Company should be of 2 - 50 characters length'),
-      otherwise: yup.string().min(2, 'Company should be of 2 - 50 characters length').required(),
+      otherwise: yup.string().min(2, 'Company should be of 2 - 50 characters length').required('Company is required'),
     }),
     role: yup.string().when('clientId', {
       is: (clientId) => clientId !== SELECT_CLIENT_DEFAULT_VALUE,
@@ -49,10 +51,14 @@ export const validationSchema = yup.object().shape(
       .string()
       .min(2, 'Description should be of 2 - 50 characters length')
       .required('Description is required'),
-    budget: yup.number().nullable(),
+    budget: yup
+      .number()
+      .typeError('Budget should be a number')
+      .positive('Budget should be a number')
+      .nullable('Budget should be a number'),
     startDate: yup.date().nullable(),
     endDate: yup.date().nullable(),
-    documentUrl: yup.string().nullable(),
+    documentUrl: yup.string().url('Document url is not valid url format').nullable(),
   },
   [
     ['firstName', 'clientId'],
