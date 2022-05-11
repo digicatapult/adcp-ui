@@ -4,10 +4,15 @@ import { useFormik } from 'formik'
 import { RadioGroup } from '@mui/material'
 import uniqid from 'uniqid'
 import * as yup from 'yup'
-import moment from 'moment'
 
 import SubNavigation from './../SubNavigation'
-import { getClientsApi, getProfilerSubNavigation, postProjectApi } from '../../util/AppUtil'
+import {
+  dateFormatter,
+  floatFormatter,
+  getClientsApi,
+  getProfilerSubNavigation,
+  postProjectApi,
+} from '../../util/AppUtil'
 import {
   FormButton,
   FormDatePicker,
@@ -16,7 +21,6 @@ import {
   FormSelect,
   FormTextInput,
   FormTextLabel,
-  PROJECT_DATE_FORMAT,
   RADIO_BUTTON_ENUMS,
   SELECT_CLIENT_DEFAULT_VALUE,
   validationSchema,
@@ -40,48 +44,39 @@ const AddProject = () => {
       description: '',
       startDate: '',
       endDate: '',
-      budget: 0.0,
+      budget: '',
       documentUrl: '',
     },
     validationSchema,
     onSubmit: async (values) => {
       let response = {}
 
-      const startDate = moment(values.startDate, PROJECT_DATE_FORMAT).isValid()
-        ? moment(values.startDate, PROJECT_DATE_FORMAT).toISOString()
-        : null
-      const endDate = moment(values.endDate, PROJECT_DATE_FORMAT).isValid()
-        ? moment(values.endDate, PROJECT_DATE_FORMAT).toISOString()
-        : null
-
-      const budget = !isNaN(values.budget) && parseFloat(values.budget) ? parseFloat(values.budget) : null
+      const startDate = dateFormatter(values.startDate)
+      const endDate = dateFormatter(values.endDate)
+      const budget = floatFormatter(values.budget)
 
       if (await yup.string().uuid().isValid(values.clientId)) {
-        const { clientId, name, description, documentUrl } = values
-
         response = await postProjectApi({
-          clientId,
-          name,
-          description,
+          clientId: values.clientId,
+          name: values.name,
+          description: values.description,
           startDate,
           endDate,
           budget,
-          documentUrl,
+          documentUrl: values.documentUrl,
         })
       } else {
-        const { firstName, lastName, name, company, role, description, documentUrl } = values
-
         response = await postProjectApi({
-          firstName,
-          lastName,
-          name,
-          company,
-          role,
-          description,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          name: values.name,
+          company: values.company,
+          role: values.role,
+          description: values.description,
           budget,
           startDate,
           endDate,
-          documentUrl,
+          documentUrl: values.documentUrl,
         })
       }
 
@@ -377,7 +372,6 @@ const ClientFieldsWrapper = styled.div`
   display: grid;
   grid-row-gap: 24px;
   grid-column-gap: 56px;
-  grid-template-columns: repeat(2, 310px);
   grid-template-areas:
     'client-first-name-wrapper client-last-name-wrapper'
     'client-company-wrapper client-role-wrapper';
@@ -409,7 +403,6 @@ const ProjectFieldsWrapper = styled.div`
   display: grid;
   grid-row-gap: 24px;
   grid-column-gap: 56px;
-  grid-template-columns: repeat(2, 310px);
   grid-template-areas:
     'project-name-wrapper project-description-wrapper'
     'project-dates-wrapper project-dates-wrapper'
@@ -436,7 +429,6 @@ const ProjectDatesWrapper = styled.div`
   display: grid;
   justify-content: center;
   grid-column-gap: 56px;
-  //grid-template-columns: repeat(3, 150px);
   grid-template-areas: 'project-budget-wrapper project-start-date-wrapper project-end-date-wrapper';
 `
 

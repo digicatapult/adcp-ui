@@ -1,6 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from '@emotion/styled'
+import moment from 'moment'
+
+import { PROJECT_DATE_FORMAT } from './ComponentUtil'
 
 export const HOME_URI = '/'
 
@@ -193,3 +196,9 @@ export const postProjectApi = async (project) => {
     body: JSON.stringify(project),
   })
 }
+
+export const dateFormatter = (date) => {
+  return moment(date, PROJECT_DATE_FORMAT).isValid() ? moment(date, PROJECT_DATE_FORMAT).toISOString() : null
+}
+
+export const floatFormatter = (value) => (!isNaN(value) && parseFloat(value) ? parseFloat(value) : null)

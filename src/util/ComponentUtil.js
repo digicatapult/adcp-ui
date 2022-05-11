@@ -17,7 +17,7 @@ export const validationSchema = yup.object().shape(
   {
     clientId: yup.string().when('firstName', {
       is: (firstName) => !firstName,
-      then: yup.string().uuid('Client is Required').required('Client is required'),
+      then: yup.string().uuid('Client is required').required('Client is required'),
       otherwise: yup.string(),
     }),
     firstName: yup.string().when('clientId', {
