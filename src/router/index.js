@@ -10,10 +10,12 @@ import {
   CATALOGUE_URI,
   HOME_URI,
   ORCHESTRATOR_URI,
+  PROFILER_CLIENT_ADD_URI,
   PROFILER_PROJECT_ADD_URI,
   PROFILER_URI,
   REGISTRATION_URI,
 } from '../util/AppUtil'
+import AddClient from '../components/profiler/AddClient'
 
 const Routing = () => {
   return (
@@ -22,6 +24,7 @@ const Routing = () => {
       <Route path={REGISTRATION_URI} element={<RegistrationWrapper />} />
       <Route path={CATALOGUE_URI} element={<CatalogueWrapper />} />
       <Route path={PROFILER_URI} element={<Profiler />} />
+      <Route path={PROFILER_CLIENT_ADD_URI} element={<AddClient />} />
       <Route path={PROFILER_PROJECT_ADD_URI} element={<AddProject />} />
       <Route path={ORCHESTRATOR_URI} element={<OrchestratorWrapper />} />
     </Routes>
