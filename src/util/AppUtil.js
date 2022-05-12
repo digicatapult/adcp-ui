@@ -162,13 +162,15 @@ const NavElement = styled.div`
 export const CustomNavLink = styled(CustomLink)`
   color: #000;
   text-decoration: none;
-
-  &:hover {
-    text-decoration: underline 3px;
-  }
 `
 
 export const CustomSubNavLink = styled(CustomNavLink)``
+
+export const dateFormatter = (date) => {
+  return moment(date, PROJECT_DATE_FORMAT).isValid() ? moment(date, PROJECT_DATE_FORMAT).toISOString() : null
+}
+
+export const floatFormatter = (value) => (!isNaN(value) && parseFloat(value) ? parseFloat(value) : null)
 
 const PROFILER_API_HOST = process.env.REACT_APP_PROFILER_API_HOST || 'localhost'
 const PROFILER_API_PORT = process.env.REACT_APP_PROFILER_API_PORT || 3001
@@ -185,6 +187,18 @@ export const getClientsApi = async () => {
   })
 }
 
+export const postClientApi = async (project) => {
+  const apiPrefix = `http://${PROFILER_API_HOST}:${PROFILER_API_PORT}/${PROFILER_API_URI_PREFIX}/profiler/client`
+
+  return fetch(`${apiPrefix}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(project),
+  })
+}
+
 export const postProjectApi = async (project) => {
   const apiPrefix = `http://${PROFILER_API_HOST}:${PROFILER_API_PORT}/${PROFILER_API_URI_PREFIX}/profiler/project`
 
@@ -196,9 +210,3 @@ export const postProjectApi = async (project) => {
     body: JSON.stringify(project),
   })
 }
-
-export const dateFormatter = (date) => {
-  return moment(date, PROJECT_DATE_FORMAT).isValid() ? moment(date, PROJECT_DATE_FORMAT).toISOString() : null
-}
-
-export const floatFormatter = (value) => (!isNaN(value) && parseFloat(value) ? parseFloat(value) : null)

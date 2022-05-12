@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from '@emotion/styled'
 import { useFormik } from 'formik'
-import { RadioGroup } from '@mui/material'
+import { MenuItem, RadioGroup } from '@mui/material'
 import uniqid from 'uniqid'
 import * as yup from 'yup'
 
@@ -12,6 +12,7 @@ import {
   getClientsApi,
   getProfilerSubNavigation,
   postProjectApi,
+  PROFILER_PROJECT_ADD_URI,
 } from '../../util/AppUtil'
 import {
   FormButton,
@@ -23,13 +24,14 @@ import {
   FormTextLabel,
   RADIO_BUTTON_ENUMS,
   SELECT_CLIENT_DEFAULT_VALUE,
-  validationSchema,
+  projectValidationSchema,
 } from '../../util/ComponentUtil'
 
 const AddProject = () => {
   const [clients, setClients] = useState([])
   const [clientsLoaded, setClientsLoaded] = useState(false)
   const [clientRadioButtonValue, setClientRadioButtonValue] = useState('')
+  const [apiResponseMessage, setApiResponseMessage] = useState('')
 
   const disableCreateClientFields = clients.length > 0 && clientRadioButtonValue === RADIO_BUTTON_ENUMS.select
 
@@ -47,7 +49,7 @@ const AddProject = () => {
       budget: '',
       documentUrl: '',
     },
-    validationSchema,
+    validationSchema: projectValidationSchema,
     onSubmit: async (values) => {
       let response = {}
 
@@ -85,10 +87,16 @@ const AddProject = () => {
       } else {
         const statusCode = response.status
 
-        if (statusCode === 409) {
-          formik.errors.name = 'Name already exists!'
-        } else if (statusCode === 404) {
-          formik.errors.clientId = 'Client does not exist!'
+        switch (statusCode) {
+          case 404:
+            formik.errors.clientId = 'Client does not exist!'
+            break
+          case 409:
+            formik.errors.name = 'Name already exists!'
+            break
+          default:
+            setApiResponseMessage(`A request ${statusCode} status code error occurred`)
+            break
         }
       }
     },
@@ -136,7 +144,7 @@ const AddProject = () => {
 
   return (
     <Wrapper>
-      <SubNavigation subNavList={getProfilerSubNavigation()} />
+      <SubNavigation currentPage={PROFILER_PROJECT_ADD_URI} subNavList={getProfilerSubNavigation()} />
       <Content onSubmit={formik.handleSubmit}>
         <ClientDetailsLabelWrapper styles={{ fontSize: '1.5rem' }}>Client Details:</ClientDetailsLabelWrapper>
         <ClientRadioGroupWrapper
@@ -156,15 +164,25 @@ const AddProject = () => {
           </ClientRadioButtonsWrapper>
           <ClientSelectWrapper>
             <FormSelect
-              clients={clients}
-              defaultValue={SELECT_CLIENT_DEFAULT_VALUE}
               disabled={!disableCreateClientFields}
               id="clientId"
               name="clientId"
               value={formik.values.clientId}
               onChangeHandler={formik.handleChange}
               error={formik.touched.clientId && Boolean(formik.errors.clientId)}
-            />
+            >
+              <MenuItem disabled value={SELECT_CLIENT_DEFAULT_VALUE}>
+                <em>{SELECT_CLIENT_DEFAULT_VALUE}</em>
+              </MenuItem>
+              {clients.map((item) => (
+                <MenuItem key={uniqid()} value={item.id}>
+                  <em>
+                    <strong>{`${item.company}`}</strong>
+                    {` - ${item.lastName}, ${item.firstName}`}
+                  </em>
+                </MenuItem>
+              ))}
+            </FormSelect>
             {clients.length > 0 ? (
               <FormInputError key={uniqid()} styles={{ padding: '24px 18px 0px 0px', color: '#ff0000' }}>
                 {clientsLoaded && disableCreateClientFields && formik.touched.clientId && formik.errors.clientId}
@@ -312,11 +330,14 @@ const AddProject = () => {
             />
             <FormInputError>{formik.touched.documentUrl && formik.errors.documentUrl}</FormInputError>
           </ProjectDocumentUrlWrapper>
-          <SubmitButtonWrapper>
-            <FormButton variant="contained" type="submit">
+          <FormBottomWrapper>
+            <ApiResponseMessageWrapper styles={{ padding: '16px 0px 0px 0px', color: '#ff0000', fontWeight: '600' }}>
+              {apiResponseMessage}
+            </ApiResponseMessageWrapper>
+            <SubmitButtonWrapper variant="contained" type="submit">
               Add Project
-            </FormButton>
-          </SubmitButtonWrapper>
+            </SubmitButtonWrapper>
+          </FormBottomWrapper>
         </ProjectFieldsWrapper>
       </Content>
     </Wrapper>
@@ -407,7 +428,7 @@ const ProjectFieldsWrapper = styled.div`
     'project-name-wrapper project-description-wrapper'
     'project-dates-wrapper project-dates-wrapper'
     'project-document-url-wrapper project-document-url-wrapper'
-    'submit-button-wrapper submit-button-wrapper';
+    'form-bottom-wrapper form-bottom-wrapper';
 `
 
 const ProjectDetailsLabelWrapper = styled(FormTextLabel)`
@@ -448,10 +469,19 @@ const ProjectDocumentUrlWrapper = styled.div`
   grid-area: project-document-url-wrapper;
 `
 
-const SubmitButtonWrapper = styled.div`
-  grid-area: submit-button-wrapper;
+const FormBottomWrapper = styled.div`
+  grid-area: form-bottom-wrapper;
   display: grid;
-  justify-content: right;
+  grid-template-areas: 'api-response-message-wrapper submit-button-wrapper';
+  justify-content: space-between;
+`
+
+const ApiResponseMessageWrapper = styled(FormInputError)`
+  grid-area: api-response-message-wrapper;
+`
+
+const SubmitButtonWrapper = styled(FormButton)`
+  grid-area: submit-button-wrapper;
 `
 
 export default AddProject

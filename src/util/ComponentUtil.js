@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import { Button, FormControlLabel, MenuItem, Radio, Select, TextField } from '@mui/material'
-import uniqid from 'uniqid'
 import * as yup from 'yup'
 
 export const SELECT_CLIENT_DEFAULT_VALUE = 'Select Client'
@@ -13,16 +12,16 @@ export const RADIO_BUTTON_ENUMS = {
 
 export const PROJECT_DATE_FORMAT = 'YYYY-MM-DD'
 
-export const validationSchema = yup.object().shape(
+export const projectValidationSchema = yup.object().shape(
   {
-    clientId: yup.string().when('firstName', {
-      is: (firstName) => !firstName,
+    clientId: yup.string().when(['firstName', 'lastName', 'company', 'role'], {
+      is: (firstName, lastName, company, role) => !firstName || !lastName || !company || !role,
       then: yup.string().uuid('Client is required').required('Client is required'),
       otherwise: yup.string(),
     }),
     firstName: yup.string().when('clientId', {
       is: (clientId) => clientId !== SELECT_CLIENT_DEFAULT_VALUE,
-      then: yup.string().min(2, 'First name should be of 2 - 50 characters length'),
+      then: yup.string(),
       otherwise: yup
         .string()
         .min(2, 'First name should be of 2 - 50 characters length')
@@ -30,7 +29,7 @@ export const validationSchema = yup.object().shape(
     }),
     lastName: yup.string().when('clientId', {
       is: (clientId) => clientId !== SELECT_CLIENT_DEFAULT_VALUE,
-      then: yup.string().min(2, 'Last name should be of 2 - 50 characters length'),
+      then: yup.string(),
       otherwise: yup
         .string()
         .min(2, 'Last name should be of 2 - 50 characters length')
@@ -38,12 +37,12 @@ export const validationSchema = yup.object().shape(
     }),
     company: yup.string().when('clientId', {
       is: (clientId) => clientId !== SELECT_CLIENT_DEFAULT_VALUE,
-      then: yup.string().min(2, 'Company should be of 2 - 50 characters length'),
+      then: yup.string(),
       otherwise: yup.string().min(2, 'Company should be of 2 - 50 characters length').required('Company is required'),
     }),
     role: yup.string().when('clientId', {
       is: (clientId) => clientId !== SELECT_CLIENT_DEFAULT_VALUE,
-      then: yup.string().min(2, 'Role should be of 2 - 50 characters length'),
+      then: yup.string(),
       otherwise: yup.string().min(2, 'Role should be of 2 - 50 characters length').required('Role is required'),
     }),
     name: yup.string().min(2, 'Name should be of 2 - 50 characters length').required('Name is required'),
@@ -78,18 +77,9 @@ export const FormRadioButtonLabel = ({ label, value, disabled }) => (
   />
 )
 
-export const FormSelect = ({ clients, defaultValue, disabled, id, name, value, onChangeHandler, error }) => (
+export const FormSelect = ({ disabled, id, name, value, onChangeHandler, error, children }) => (
   <FormSelectStyles disabled={disabled} id={id} name={name} value={value} onChange={onChangeHandler} error={error}>
-    <MenuItem disabled value={defaultValue}>
-      <em>{defaultValue}</em>
-    </MenuItem>
-    {clients.map((item) => (
-      <MenuItem key={uniqid()} value={item.id}>
-        <em>
-          {item.lastName}, {item.firstName} | {item.company}
-        </em>
-      </MenuItem>
-    ))}
+    {children}
   </FormSelectStyles>
 )
 
@@ -133,6 +123,17 @@ export const FormButton = ({ variant, type, styles, children }) => (
   </FormButtonStyles>
 )
 
+export const CustomSubNavMenuItem = ({ currentPage, children }) => (
+  <CustomMenuItemStyles selected={currentPage}>{children}</CustomMenuItemStyles>
+)
+
+export const CustomMenuItemStyles = styled(MenuItem)`
+  padding: 0px 0px 0px 48px;
+  height: 100%;
+  font-size: 1.1rem;
+  font-weight: 600;
+`
+
 const FormSelectStyles = styled(Select)`
   height: 56px;
 `
@@ -160,6 +161,7 @@ const FormInputErrorStyles = styled.div`
   height: 16px;
   padding: ${({ styles }) => (styles ? styles.padding : '0px')};
   font-size: 0.9rem;
+  font-weight: ${({ styles }) => (styles ? styles.fontWeight : '0')};
   color: ${({ styles }) => (styles ? styles.color : '#ff0000')};
 `
 
