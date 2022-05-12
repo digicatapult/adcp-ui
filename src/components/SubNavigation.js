@@ -1,24 +1,31 @@
 import * as React from 'react'
 import styled from '@emotion/styled'
 import uniqid from 'uniqid'
+import { MenuList } from '@mui/material'
 
 import { CustomSubNavLink } from '../util/AppUtil'
+import { CustomSubNavMenuItem } from '../util/ComponentUtil'
 
-const SubNavigation = ({ subNavList }) => {
+const SubNavigation = ({ currentPage, subNavList }) => {
   return (
-    <Wrapper>
+    <Wrapper rows={subNavList.length}>
       {subNavList.map((item) => (
         <CustomSubNavLink key={uniqid()} to={item.to}>
-          {item.name}
+          <CustomSubNavMenuItem currentPage={currentPage === item.to}>{item.name}</CustomSubNavMenuItem>
         </CustomSubNavLink>
       ))}
     </Wrapper>
   )
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled(MenuList)`
   grid-area: sub-navigation;
-  font-size: 1.1rem;
+  display: grid;
+  grid-template-rows: repeat(${({ rows }) => rows}, 48px);
+  grid-template-columns: 100%;
+  padding-top: 32px;
+  justify-content: center;
+  background-color: #bababb;
 `
 
 export default SubNavigation

@@ -1,6 +1,9 @@
+import React from 'react'
 import { Link } from 'react-router-dom'
-import * as React from 'react'
 import styled from '@emotion/styled'
+import moment from 'moment'
+
+import { PROJECT_DATE_FORMAT } from './ComponentUtil'
 
 export const HOME_URI = '/'
 
@@ -19,7 +22,14 @@ export const CATALOGUE_CATEGORY_DETACH_URI = `${CATALOGUE_URI}/category/detach`
 
 export const PROFILER_URI = '/profiler'
 export const PROFILER_PROJECT_URI = `${PROFILER_URI}/project`
+export const PROFILER_PROJECT_ADD_URI = `${PROFILER_URI}/project/add`
+export const PROFILER_PROJECT_EDIT_URI = `${PROFILER_URI}/project/edit`
+export const PROFILER_PROJECT_REMOVE_URI = `${PROFILER_URI}/project/remove`
 export const PROFILER_PROJECT_SERVICES_URI = `${PROFILER_PROJECT_URI}/services`
+export const PROFILER_CLIENT_URI = `${PROFILER_PROJECT_URI}/client`
+export const PROFILER_CLIENT_ADD_URI = `${PROFILER_PROJECT_URI}/client/add`
+export const PROFILER_CLIENT_EDIT_URI = `${PROFILER_PROJECT_URI}/client/edit`
+export const PROFILER_CLIENT_REMOVE_URI = `${PROFILER_PROJECT_URI}/client/remove`
 export const PROFILER_SOLUTION_TEMPLATE_URI = `${PROFILER_URI}/solution-template`
 export const PROFILER_SOLUTION_TEMPLATE_ADD_URI = `${PROFILER_SOLUTION_TEMPLATE_URI}/add`
 export const PROFILER_SOLUTION_TEMPLATE_EDIT_URI = `${PROFILER_SOLUTION_TEMPLATE_URI}/edit`
@@ -80,11 +90,39 @@ export const getCatalogueSubNavigation = () => [
 export const getProfilerSubNavigation = () => [
   {
     to: PROFILER_PROJECT_URI,
-    name: 'Project',
+    name: 'List Projects',
   },
   {
     to: PROFILER_PROJECT_SERVICES_URI,
-    name: 'Services',
+    name: 'List Project Services',
+  },
+  {
+    to: PROFILER_PROJECT_ADD_URI,
+    name: 'Add Project',
+  },
+  {
+    to: PROFILER_PROJECT_EDIT_URI,
+    name: 'Edit Project',
+  },
+  {
+    to: PROFILER_PROJECT_REMOVE_URI,
+    name: 'Remove Project',
+  },
+  {
+    to: PROFILER_CLIENT_URI,
+    name: 'List Clients',
+  },
+  {
+    to: PROFILER_CLIENT_ADD_URI,
+    name: 'Add Client',
+  },
+  {
+    to: PROFILER_CLIENT_EDIT_URI,
+    name: 'Edit Client',
+  },
+  {
+    to: PROFILER_CLIENT_REMOVE_URI,
+    name: 'Remove Client',
   },
   {
     to: PROFILER_SOLUTION_TEMPLATE_URI,
@@ -106,9 +144,9 @@ export const getProfilerSubNavigation = () => [
 
 export const getOrchestratorSubNavigation = () => []
 
-const CustomLink = ({ children, to, ...props }) => {
+const CustomLink = ({ to, styles, children, ...props }) => {
   return (
-    <NavElement>
+    <NavElement styles={styles}>
       <Link to={to} {...props}>
         {children}
       </Link>
@@ -117,20 +155,46 @@ const CustomLink = ({ children, to, ...props }) => {
 }
 
 const NavElement = styled.div`
-  margin: 8px 16px;
+  margin: ${({ styles }) => (styles ? styles.margin : '0px')};
   color: #000;
 `
 
 export const CustomNavLink = styled(CustomLink)`
-  display: block;
   color: #000;
   text-decoration: none;
-
-  &:hover {
-    text-decoration: underline 3px;
-  }
 `
 
-export const CustomSubNavLink = styled(CustomNavLink)`
-  margin-bottom: 16px;
-`
+export const CustomSubNavLink = styled(CustomNavLink)``
+
+export const dateFormatter = (date) => {
+  return moment(date, PROJECT_DATE_FORMAT).isValid() ? moment(date, PROJECT_DATE_FORMAT).toISOString() : null
+}
+
+export const floatFormatter = (value) => (!isNaN(value) && parseFloat(value) ? parseFloat(value) : null)
+
+const PROFILER_API_HOST = process.env.REACT_APP_PROFILER_API_HOST || 'localhost'
+const PROFILER_API_PORT = process.env.REACT_APP_PROFILER_API_PORT || 3001
+const PROFILER_API_URI_PREFIX = process.env.REACT_APP_PROFILER_API_URI_PREFIX || 'v1'
+
+export const getClientsApi = async () => {
+  const apiPrefix = `http://${PROFILER_API_HOST}:${PROFILER_API_PORT}/${PROFILER_API_URI_PREFIX}/profiler/client`
+
+  return fetch(`${apiPrefix}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+}
+
+export const postProjectApi = async (project) => {
+  const apiPrefix = `http://${PROFILER_API_HOST}:${PROFILER_API_PORT}/${PROFILER_API_URI_PREFIX}/profiler/project`
+
+  return fetch(`${apiPrefix}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(project),
+  })
+}

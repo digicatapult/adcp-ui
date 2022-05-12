@@ -15,12 +15,13 @@ function App() {
 
 const Wrapper = styled.div`
   display: grid;
+  grid-template-rows: 80px auto;
   grid-template-areas:
     'header'
     'main-wrapper';
-  height: 100%;
   font-size: 1rem;
   font-family: 'Lato', sans-serif;
+  height: 100%;
 `
 
 export default App
