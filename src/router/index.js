@@ -5,12 +5,14 @@ import RegistrationWrapper from '../components/registration/RegistrationWrapper'
 import CatalogueWrapper from '../components/catalogue/CatalogueWrapper'
 import Profiler from '../components/profiler/Profiler'
 import AddProject from '../components/profiler/AddProject'
+import AddSolutionTemplate from '../components/profiler/AddSolutionTemplate'
 import OrchestratorWrapper from '../components/orchestrator/OrchestratorWrapper'
 import {
   CATALOGUE_URI,
   HOME_URI,
   ORCHESTRATOR_URI,
   PROFILER_PROJECT_ADD_URI,
+  PROFILER_SOLUTION_TEMPLATE_ADD_URI,
   PROFILER_URI,
   REGISTRATION_URI,
 } from '../util/AppUtil'
@@ -23,6 +25,7 @@ const Routing = () => {
       <Route path={CATALOGUE_URI} element={<CatalogueWrapper />} />
       <Route path={PROFILER_URI} element={<Profiler />} />
       <Route path={PROFILER_PROJECT_ADD_URI} element={<AddProject />} />
+      <Route path={PROFILER_SOLUTION_TEMPLATE_ADD_URI} element={<AddSolutionTemplate />} />
       <Route path={ORCHESTRATOR_URI} element={<OrchestratorWrapper />} />
     </Routes>
   )

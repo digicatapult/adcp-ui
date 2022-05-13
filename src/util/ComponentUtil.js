@@ -1,7 +1,17 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { Button, FormControlLabel, MenuItem, Radio, Select, TextField } from '@mui/material'
+import {
+  Accordion,
+  AccordionSummary,
+  Button,
+  FormControlLabel,
+  MenuItem,
+  Radio,
+  Select,
+  TextField,
+} from '@mui/material'
 import * as yup from 'yup'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 export const SELECT_CLIENT_DEFAULT_VALUE = 'Select Client'
 
@@ -105,6 +115,8 @@ export const FormInputError = ({ children, styles }) => (
   <FormInputErrorStyles styles={styles}>{children}</FormInputErrorStyles>
 )
 
+export const Text = ({ children, styles }) => <TextStyles styles={styles}>{children}</TextStyles>
+
 export const FormDatePicker = ({ id, name, value, onChangeHandler, error, styles }) => (
   <FormDatePickerStyles
     type="date"
@@ -123,9 +135,39 @@ export const FormButton = ({ variant, type, styles, children }) => (
   </FormButtonStyles>
 )
 
+export const SimpleButton = ({ disabled, variant, type, name, value, onClickHandler, styles, children }) => (
+  <FormButtonStyles
+    disabled={disabled}
+    variant={variant}
+    type={type}
+    name={name}
+    value={value}
+    onClick={onClickHandler}
+    styles={styles}
+  >
+    {children}
+  </FormButtonStyles>
+)
+
 export const CustomSubNavMenuItem = ({ currentPage, children }) => (
   <CustomMenuItemStyles selected={currentPage}>{children}</CustomMenuItemStyles>
 )
+
+export const ServiceAccordion = ({ expanded, children }) => {
+  return <ServiceAccordionStyles expanded={expanded}>{children}</ServiceAccordionStyles>
+}
+
+export const ServiceAccordionSummary = ({ children }) => {
+  return (
+    <ServiceAccordionSummaryStyles expanded={true} expandIcon={<CustomExpandMoreIconStyles />}>
+      {children}
+    </ServiceAccordionSummaryStyles>
+  )
+}
+
+export const CustomExpandMoreIconStyles = styled(ExpandMoreIcon)`
+  margin-right: 8px;
+`
 
 export const CustomMenuItemStyles = styled(MenuItem)`
   padding: 0px 0px 0px 48px;
@@ -165,6 +207,14 @@ const FormInputErrorStyles = styled.div`
   color: ${({ styles }) => (styles ? styles.color : '#ff0000')};
 `
 
+const TextStyles = styled.div`
+  height: 16px;
+  padding: ${({ styles }) => (styles ? styles.padding : '0px')};
+  font-size: ${({ styles }) => (styles ? styles.fontSize : '1rem')};
+  font-weight: ${({ styles }) => (styles ? styles.fontWeight : '0')};
+  color: ${({ styles }) => (styles ? styles.color : '#333')};
+`
+
 const FormDatePickerStyles = styled(TextField)`
   height: ${({ styles }) => (styles ? styles.height : '56px')};
   margin: ${({ styles }) => (styles ? styles.margin : '8px 0px')};
@@ -174,4 +224,21 @@ const FormDatePickerStyles = styled(TextField)`
 const FormButtonStyles = styled(Button)`
   width: ${({ styles }) => (styles ? styles.width : '180px')};
   height: ${({ styles }) => (styles ? styles.height : '48px')};
+`
+
+const ServiceAccordionStyles = styled(Accordion)`
+  border: 1px solid #fff;
+
+  '&:not(:last-child)': {
+    border-bottom: 0;
+  }
+  '&:before': {
+    display: none;
+  }
+`
+
+const ServiceAccordionSummaryStyles = styled(AccordionSummary)`
+  backgroundcolor: #999;
+  flex-direction: row-reverse;
+  margin-right: 16px;
 `
