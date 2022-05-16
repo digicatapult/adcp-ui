@@ -1,14 +1,21 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import styled from '@emotion/styled'
 import { useFormik } from 'formik'
 
 import SubNavigation from './../SubNavigation'
-import { getProfilerSubNavigation, postClientApi, PROFILER_CLIENT_ADD_URI } from '../../util/AppUtil'
+import { getClientByIdApi, getProfilerSubNavigation, PROFILER_CLIENT_EDIT_URI, putClientApi } from '../../util/AppUtil'
 import { clientValidationSchema, FormButton, FormInputError, FormTextLabel } from '../../util/ComponentUtil'
 import Client from './Client'
 
-const AddClient = () => {
+const EditClient = () => {
+  console.log('EditClient called')
+
+  const { id: clientId } = useParams()
+
+  const [clientLoaded, setClientLoaded] = useState(false)
   const [apiResponseMessage, setApiResponseMessage] = useState('')
+  const [disableFields, setDisableFields] = useState(false)
 
   const formik = useFormik({
     initialValues: {
@@ -17,9 +24,10 @@ const AddClient = () => {
       company: '',
       role: '',
     },
+    enableReinitialize: false,
     validationSchema: clientValidationSchema,
     onSubmit: async (values) => {
-      const response = await postClientApi({
+      const response = await putClientApi(clientId, {
         firstName: values.firstName,
         lastName: values.lastName,
         name: values.name,
@@ -30,26 +38,57 @@ const AddClient = () => {
       if (response.ok) {
         window.location.reload()
       } else {
-        const statusCode = response.status
-
         console.error('An error occurred')
-        setApiResponseMessage(`A request ${statusCode} status code error occurred`)
       }
     },
   })
 
+  const getClientById = async () => {
+    const response = await getClientByIdApi(clientId)
+
+    if (response.ok) {
+      setClientLoaded(true)
+
+      const result = await response.json()
+
+      await formik.setFieldValue('firstName', result.firstName)
+      await formik.setFieldValue('lastName', result.lastName)
+      await formik.setFieldValue('company', result.company)
+      await formik.setFieldValue('role', result.role)
+    } else {
+      setDisableFields(true)
+
+      const statusCode = response.status
+
+      switch (statusCode) {
+        case 404:
+          setApiResponseMessage('Client does not exist!')
+          break
+        default:
+          setApiResponseMessage(`A request ${statusCode} status code error occurred`)
+          break
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (!clientLoaded) {
+      getClientById()
+    }
+  })
+
   return (
     <Wrapper>
-      <SubNavigation currentPage={PROFILER_CLIENT_ADD_URI} subNavList={getProfilerSubNavigation()} />
+      <SubNavigation currentPage={PROFILER_CLIENT_EDIT_URI} subNavList={getProfilerSubNavigation()} />
       <Content onSubmit={formik.handleSubmit}>
         <ClientDetailsLabelWrapper styles={{ fontSize: '1.5rem' }}>Client Details:</ClientDetailsLabelWrapper>
-        <Client formik={formik} apiResponseMessage={apiResponseMessage} />
+        <Client formik={formik} apiResponseMessage={apiResponseMessage} disableFields={disableFields} />
         <FormBottomWrapper>
           <ApiResponseMessageWrapper styles={{ padding: '16px 0px 0px 0px', color: '#ff0000', fontWeight: '600' }}>
             {apiResponseMessage}
           </ApiResponseMessageWrapper>
-          <SubmitButtonWrapper variant="contained" type="submit">
-            Add Client
+          <SubmitButtonWrapper variant="contained" type="submit" disabled={disableFields}>
+            Edit Client
           </SubmitButtonWrapper>
         </FormBottomWrapper>
       </Content>
@@ -99,4 +138,4 @@ const SubmitButtonWrapper = styled(FormButton)`
   grid-area: submit-button-wrapper;
 `
 
-export default AddClient
+export default EditClient

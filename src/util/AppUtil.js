@@ -26,10 +26,10 @@ export const PROFILER_PROJECT_ADD_URI = `${PROFILER_URI}/project/add`
 export const PROFILER_PROJECT_EDIT_URI = `${PROFILER_URI}/project/edit`
 export const PROFILER_PROJECT_REMOVE_URI = `${PROFILER_URI}/project/remove`
 export const PROFILER_PROJECT_SERVICES_URI = `${PROFILER_PROJECT_URI}/services`
-export const PROFILER_CLIENT_URI = `${PROFILER_PROJECT_URI}/client`
-export const PROFILER_CLIENT_ADD_URI = `${PROFILER_PROJECT_URI}/client/add`
-export const PROFILER_CLIENT_EDIT_URI = `${PROFILER_PROJECT_URI}/client/edit`
-export const PROFILER_CLIENT_REMOVE_URI = `${PROFILER_PROJECT_URI}/client/remove`
+export const PROFILER_CLIENT_URI = `${PROFILER_URI}/client`
+export const PROFILER_CLIENT_ADD_URI = `${PROFILER_URI}/client/add`
+export const PROFILER_CLIENT_EDIT_URI = `${PROFILER_URI}/client/edit/:id`
+export const PROFILER_CLIENT_REMOVE_URI = `${PROFILER_URI}/client/remove`
 export const PROFILER_SOLUTION_TEMPLATE_URI = `${PROFILER_URI}/solution-template`
 export const PROFILER_SOLUTION_TEMPLATE_ADD_URI = `${PROFILER_SOLUTION_TEMPLATE_URI}/add`
 export const PROFILER_SOLUTION_TEMPLATE_EDIT_URI = `${PROFILER_SOLUTION_TEMPLATE_URI}/edit`
@@ -187,7 +187,18 @@ export const getClientsApi = async () => {
   })
 }
 
-export const postClientApi = async (project) => {
+export const getClientByIdApi = async (id) => {
+  const apiPrefix = `http://${PROFILER_API_HOST}:${PROFILER_API_PORT}/${PROFILER_API_URI_PREFIX}/profiler/client/${id}`
+
+  return fetch(`${apiPrefix}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+}
+
+export const postClientApi = async (client) => {
   const apiPrefix = `http://${PROFILER_API_HOST}:${PROFILER_API_PORT}/${PROFILER_API_URI_PREFIX}/profiler/client`
 
   return fetch(`${apiPrefix}`, {
@@ -195,7 +206,19 @@ export const postClientApi = async (project) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(project),
+    body: JSON.stringify(client),
+  })
+}
+
+export const putClientApi = async (id, client) => {
+  const apiPrefix = `http://${PROFILER_API_HOST}:${PROFILER_API_PORT}/${PROFILER_API_URI_PREFIX}/profiler/client/${id}`
+
+  return fetch(`${apiPrefix}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(client),
   })
 }
 
