@@ -11,9 +11,11 @@ import {
   HOME_URI,
   ORCHESTRATOR_URI,
   PROFILER_PROJECT_ADD_URI,
+  PROFILER_PROJECT_EDIT_URI,
   PROFILER_URI,
   REGISTRATION_URI,
 } from '../util/AppUtil'
+import EditProject from '../components/profiler/EditProject'
 
 const Routing = () => {
   return (
@@ -23,6 +25,7 @@ const Routing = () => {
       <Route path={CATALOGUE_URI} element={<CatalogueWrapper />} />
       <Route path={PROFILER_URI} element={<Profiler />} />
       <Route path={PROFILER_PROJECT_ADD_URI} element={<AddProject />} />
+      <Route path={PROFILER_PROJECT_EDIT_URI} element={<EditProject />} />
       <Route path={ORCHESTRATOR_URI} element={<OrchestratorWrapper />} />
     </Routes>
   )

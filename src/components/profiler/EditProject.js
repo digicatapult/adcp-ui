@@ -7,12 +7,13 @@ import * as yup from 'yup'
 
 import SubNavigation from './../SubNavigation'
 import {
-  isoDateFormatter,
   floatFormatter,
   getClientsApi,
   getProfilerSubNavigation,
-  postProjectApi,
-  PROFILER_PROJECT_ADD_URI,
+  getProjectByIdApi,
+  isoDateFormatter,
+  PROFILER_PROJECT_EDIT_URI,
+  putProjectApi,
 } from '../../util/AppUtil'
 import {
   FormButton,
@@ -24,16 +25,22 @@ import {
   RADIO_BUTTON_ENUMS,
   SELECT_CLIENT_DEFAULT_VALUE,
   projectValidationSchema,
+  datePickerFormatter,
 } from '../../util/ComponentUtil'
 import Project from './Project'
+import { useParams } from 'react-router-dom'
 
 const AddProject = () => {
+  const { id: projectId } = useParams()
+
   const [clients, setClients] = useState([])
   const [clientsLoaded, setClientsLoaded] = useState(false)
   const [clientRadioButtonValue, setClientRadioButtonValue] = useState('')
+  const [projectLoaded, setProjectLoaded] = useState(false)
   const [apiResponseMessage, setApiResponseMessage] = useState('')
 
   const disableCreateClientFields = clients.length > 0 && clientRadioButtonValue === RADIO_BUTTON_ENUMS.select
+  const disableProjectFields = !!apiResponseMessage
 
   const formik = useFormik({
     initialValues: {
@@ -58,7 +65,7 @@ const AddProject = () => {
       const budget = floatFormatter(values.budget)
 
       if (await yup.string().uuid().isValid(values.clientId)) {
-        response = await postProjectApi({
+        response = await putProjectApi(projectId, {
           clientId: values.clientId,
           name: values.name,
           description: values.description,
@@ -68,7 +75,7 @@ const AddProject = () => {
           documentUrl: values.documentUrl,
         })
       } else {
-        response = await postProjectApi({
+        response = await putProjectApi(projectId, {
           firstName: values.firstName,
           lastName: values.lastName,
           name: values.name,
@@ -136,15 +143,50 @@ const AddProject = () => {
     }
   }
 
+  const getProjectById = async () => {
+    const response = await getProjectByIdApi(projectId)
+
+    if (response.ok) {
+      setProjectLoaded(true)
+
+      const result = await response.json()
+
+      await formik.setFieldValue('clientId', result.clientId)
+      await formik.setFieldValue('name', result.name)
+      await formik.setFieldValue('description', result.description)
+      await formik.setFieldValue('budget', result.budget ? result.budget : '')
+      await formik.setFieldValue('startDate', datePickerFormatter(result.startDate))
+      await formik.setFieldValue('endDate', datePickerFormatter(result.endDate))
+      await formik.setFieldValue('documentUrl', result.documentUrl ? result.documentUrl : '')
+    } else {
+      const statusCode = response.status
+
+      switch (statusCode) {
+        case 404:
+          setApiResponseMessage('Project does not exist!')
+          break
+        case 409:
+          formik.errors.name = 'Name already exists!'
+          break
+        default:
+          setApiResponseMessage(`A request ${statusCode} status code error occurred`)
+          break
+      }
+    }
+  }
+
   useEffect(() => {
     if (!clientsLoaded) {
       getClients()
     }
-  }, [clientsLoaded, clients, clientRadioButtonValue])
+    if (!projectLoaded) {
+      getProjectById()
+    }
+  })
 
   return (
     <Wrapper>
-      <SubNavigation currentPage={PROFILER_PROJECT_ADD_URI} subNavList={getProfilerSubNavigation()} />
+      <SubNavigation currentPage={PROFILER_PROJECT_EDIT_URI} subNavList={getProfilerSubNavigation()} />
       <Content onSubmit={formik.handleSubmit}>
         <ClientDetailsLabelWrapper styles={{ fontSize: '1.5rem' }}>Client Details:</ClientDetailsLabelWrapper>
         <ClientRadioGroupWrapper
@@ -158,13 +200,17 @@ const AddProject = () => {
             <FormRadioButtonLabel
               label={`*${SELECT_CLIENT_DEFAULT_VALUE}`}
               value={RADIO_BUTTON_ENUMS.select}
-              disabled={clients.length === 0}
+              disabled={disableProjectFields || clients.length === 0}
             />
-            <FormRadioButtonLabel label="*Create Client" value={RADIO_BUTTON_ENUMS.create} />
+            <FormRadioButtonLabel
+              label="*Create Client"
+              value={RADIO_BUTTON_ENUMS.create}
+              disabled={disableProjectFields}
+            />
           </ClientRadioButtonsWrapper>
           <ClientSelectWrapper>
             <FormSelect
-              disabled={!disableCreateClientFields}
+              disabled={disableProjectFields || !disableCreateClientFields}
               id="clientId"
               name="clientId"
               value={formik.values.clientId}
@@ -255,13 +301,13 @@ const AddProject = () => {
           </ClientRoleWrapper>
         </ClientFieldsWrapper>
         <ProjectDetailsLabelWrapper styles={{ fontSize: '1.5rem' }}>Project Details:</ProjectDetailsLabelWrapper>
-        <Project formik={formik} apiResponseMessage={apiResponseMessage} />
+        <Project formik={formik} apiResponseMessage={apiResponseMessage} disableProjectFields={disableProjectFields} />
         <FormBottomWrapper>
           <ApiResponseMessageWrapper styles={{ padding: '16px 0px 0px 0px', color: '#ff0000', fontWeight: '600' }}>
             {apiResponseMessage}
           </ApiResponseMessageWrapper>
-          <SubmitButtonWrapper variant="contained" type="submit">
-            Add Project
+          <SubmitButtonWrapper variant="contained" type="submit" disabled={disableProjectFields}>
+            Edit Project
           </SubmitButtonWrapper>
         </FormBottomWrapper>
       </Content>
