@@ -123,7 +123,7 @@ export const FormDatePicker = ({ id, name, value, onChangeHandler, error, styles
 )
 
 export const FormButton = ({ variant, type, styles, disabled, children }) => (
-  <FormButtonStyles variant={variant} type={type} disabled={disabled} tyles={styles}>
+  <FormButtonStyles variant={variant} type={type} disabled={disabled} styles={styles}>
     {children}
   </FormButtonStyles>
 )
