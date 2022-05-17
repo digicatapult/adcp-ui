@@ -9,8 +9,6 @@ import { clientValidationSchema, FormButton, FormInputError, FormTextLabel } fro
 import Client from './Client'
 
 const EditClient = () => {
-  console.log('EditClient called')
-
   const { id: clientId } = useParams()
 
   const [clientLoaded, setClientLoaded] = useState(false)
