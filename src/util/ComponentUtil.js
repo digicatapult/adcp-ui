@@ -12,6 +12,13 @@ export const RADIO_BUTTON_ENUMS = {
 
 export const PROJECT_DATE_FORMAT = 'YYYY-MM-DD'
 
+export const clientValidationSchema = yup.object().shape({
+  firstName: yup.string().min(2, 'First name should be of 2 - 50 characters length').required('First name is required'),
+  lastName: yup.string().min(2, 'Last name should be of 2 - 50 characters length').required('Last name is required'),
+  company: yup.string().min(2, 'Company should be of 2 - 50 characters length').required('Company is required'),
+  role: yup.string().min(2, 'Role should be of 2 - 50 characters length').required('Role is required'),
+})
+
 export const projectValidationSchema = yup.object().shape(
   {
     clientId: yup.string().when(['firstName', 'lastName', 'company', 'role'], {
@@ -117,8 +124,8 @@ export const FormDatePicker = ({ id, name, value, onChangeHandler, error, styles
   />
 )
 
-export const FormButton = ({ variant, type, styles, children }) => (
-  <FormButtonStyles variant={variant} type={type} styles={styles}>
+export const FormButton = ({ variant, type, styles, disabled, children }) => (
+  <FormButtonStyles variant={variant} type={type} styles={styles} disabled={disabled}>
     {children}
   </FormButtonStyles>
 )
