@@ -19,13 +19,13 @@ import {
   FormInputError,
   FormRadioButtonLabel,
   FormSelect,
-  FormTextInput,
   FormTextLabel,
   RADIO_BUTTON_ENUMS,
   SELECT_CLIENT_DEFAULT_VALUE,
   projectValidationSchema,
 } from '../../util/ComponentUtil'
 import Project from './Project'
+import Client from './Client'
 
 const AddProject = () => {
   const [clients, setClients] = useState([])
@@ -194,66 +194,7 @@ const AddProject = () => {
             )}
           </ClientSelectWrapper>
         </ClientRadioGroupWrapper>
-        <ClientFieldsWrapper>
-          <ClientFirstNameWrapper>
-            <FormTextLabel>*First name:</FormTextLabel>
-            <FormTextInput
-              disabled={disableCreateClientFields}
-              placeholder="Enter first name"
-              id="firstName"
-              name="firstName"
-              value={formik.values.firstName}
-              onChangeHandler={formik.handleChange}
-              error={formik.touched.firstName && Boolean(formik.errors.firstName)}
-            />
-            <FormInputError>
-              {!disableCreateClientFields && formik.touched.firstName && formik.errors.firstName}
-            </FormInputError>
-          </ClientFirstNameWrapper>
-          <ClientLastNameWrapper>
-            <FormTextLabel>*Last name:</FormTextLabel>
-            <FormTextInput
-              disabled={disableCreateClientFields}
-              placeholder="Enter last name"
-              id="lastName"
-              name="lastName"
-              value={formik.values.lastName}
-              onChangeHandler={formik.handleChange}
-              error={formik.touched.lastName && Boolean(formik.errors.lastName)}
-            />
-            <FormInputError>
-              {!disableCreateClientFields && formik.touched.lastName && formik.errors.lastName}
-            </FormInputError>
-          </ClientLastNameWrapper>
-          <ClientCompanyWrapper>
-            <FormTextLabel>*Company:</FormTextLabel>
-            <FormTextInput
-              disabled={disableCreateClientFields}
-              placeholder="Enter company"
-              id="company"
-              name="company"
-              value={formik.values.company}
-              onChangeHandler={formik.handleChange}
-              error={formik.touched.company && Boolean(formik.errors.company)}
-            />
-            <FormInputError>
-              {!disableCreateClientFields && formik.touched.company && formik.errors.company}
-            </FormInputError>
-          </ClientCompanyWrapper>
-          <ClientRoleWrapper>
-            <FormTextLabel>*Role:</FormTextLabel>
-            <FormTextInput
-              disabled={disableCreateClientFields}
-              placeholder="Enter role"
-              id="role"
-              name="role"
-              value={formik.values.role}
-              onChangeHandler={formik.handleChange}
-              error={formik.touched.role && Boolean(formik.errors.role)}
-            />
-            <FormInputError>{!disableCreateClientFields && formik.touched.role && formik.errors.role}</FormInputError>
-          </ClientRoleWrapper>
-        </ClientFieldsWrapper>
+        <Client formik={formik} apiResponseMessage={apiResponseMessage} disableFields={disableCreateClientFields} />
         <ProjectDetailsLabelWrapper styles={{ fontSize: '1.5rem' }}>Project Details:</ProjectDetailsLabelWrapper>
         <Project formik={formik} apiResponseMessage={apiResponseMessage} />
         <FormBottomWrapper>
@@ -314,35 +255,8 @@ const ClientSelectWrapper = styled.div`
   grid-template-rows: 40px 16px;
 `
 
-const ClientFieldsWrapper = styled.div`
-  grid-area: client-fields-wrapper;
-  display: grid;
-  grid-row-gap: 24px;
-  grid-column-gap: 56px;
-  grid-template-areas:
-    'client-first-name-wrapper client-last-name-wrapper'
-    'client-company-wrapper client-role-wrapper';
-  margin-bottom: 16px;
-`
-
 const ClientDetailsLabelWrapper = styled(FormTextLabel)`
   grid-area: client-details-label-wrapper;
-`
-
-const ClientFirstNameWrapper = styled.div`
-  grid-area: client-first-name-wrapper;
-`
-
-const ClientLastNameWrapper = styled.div`
-  grid-area: client-last-name-wrapper;
-`
-
-const ClientCompanyWrapper = styled.div`
-  grid-area: client-company-wrapper;
-`
-
-const ClientRoleWrapper = styled.div`
-  grid-area: client-role-wrapper;
 `
 
 const ProjectDetailsLabelWrapper = styled(FormTextLabel)`
