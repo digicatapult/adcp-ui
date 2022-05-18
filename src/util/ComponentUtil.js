@@ -2,6 +2,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 import { Button, FormControlLabel, MenuItem, Radio, Select, TextField } from '@mui/material'
 import * as yup from 'yup'
+import moment from 'moment'
 
 export const SELECT_CLIENT_DEFAULT_VALUE = 'Select Client'
 
@@ -11,6 +12,10 @@ export const RADIO_BUTTON_ENUMS = {
 }
 
 export const PROJECT_DATE_FORMAT = 'YYYY-MM-DD'
+
+export const datePickerFormatter = (date) => {
+  return moment(date).isValid() ? moment(date).format(PROJECT_DATE_FORMAT) : ''
+}
 
 export const clientValidationSchema = yup.object().shape({
   firstName: yup.string().min(2, 'First name should be of 2 - 50 characters length').required('First name is required'),
@@ -125,7 +130,7 @@ export const FormDatePicker = ({ id, name, value, onChangeHandler, error, styles
 )
 
 export const FormButton = ({ variant, type, styles, disabled, children }) => (
-  <FormButtonStyles variant={variant} type={type} styles={styles} disabled={disabled}>
+  <FormButtonStyles variant={variant} type={type} disabled={disabled} styles={styles}>
     {children}
   </FormButtonStyles>
 )

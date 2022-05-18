@@ -23,7 +23,7 @@ export const CATALOGUE_CATEGORY_DETACH_URI = `${CATALOGUE_URI}/category/detach`
 export const PROFILER_URI = '/profiler'
 export const PROFILER_PROJECT_URI = `${PROFILER_URI}/project`
 export const PROFILER_PROJECT_ADD_URI = `${PROFILER_URI}/project/add`
-export const PROFILER_PROJECT_EDIT_URI = `${PROFILER_URI}/project/edit`
+export const PROFILER_PROJECT_EDIT_URI = `${PROFILER_URI}/project/edit/:id`
 export const PROFILER_PROJECT_REMOVE_URI = `${PROFILER_URI}/project/remove`
 export const PROFILER_PROJECT_SERVICES_URI = `${PROFILER_PROJECT_URI}/services`
 export const PROFILER_CLIENT_URI = `${PROFILER_URI}/client`
@@ -166,7 +166,7 @@ export const CustomNavLink = styled(CustomLink)`
 
 export const CustomSubNavLink = styled(CustomNavLink)``
 
-export const dateFormatter = (date) => {
+export const isoDateFormatter = (date) => {
   return moment(date, PROJECT_DATE_FORMAT).isValid() ? moment(date, PROJECT_DATE_FORMAT).toISOString() : null
 }
 
@@ -222,11 +222,34 @@ export const putClientApi = async (id, client) => {
   })
 }
 
+export const getProjectByIdApi = async (id) => {
+  const apiPrefix = `http://${PROFILER_API_HOST}:${PROFILER_API_PORT}/${PROFILER_API_URI_PREFIX}/profiler/project/${id}`
+
+  return fetch(`${apiPrefix}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+}
+
 export const postProjectApi = async (project) => {
   const apiPrefix = `http://${PROFILER_API_HOST}:${PROFILER_API_PORT}/${PROFILER_API_URI_PREFIX}/profiler/project`
 
   return fetch(`${apiPrefix}`, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(project),
+  })
+}
+
+export const putProjectApi = async (id, project) => {
+  const apiPrefix = `http://${PROFILER_API_HOST}:${PROFILER_API_PORT}/${PROFILER_API_URI_PREFIX}/profiler/project/${id}`
+
+  return fetch(`${apiPrefix}`, {
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },
