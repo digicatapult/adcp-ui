@@ -153,13 +153,17 @@ export const CustomSubNavMenuItem = ({ currentPage, children }) => (
   <CustomMenuItemStyles selected={currentPage}>{children}</CustomMenuItemStyles>
 )
 
-export const ServiceAccordion = ({ expanded, children }) => {
-  return <ServiceAccordionStyles expanded={expanded}>{children}</ServiceAccordionStyles>
+export const ServiceAccordion = ({ expanded, onChangeHandler, children }) => {
+  return (
+    <ServiceAccordionStyles expanded={expanded} onChange={onChangeHandler}>
+      {children}
+    </ServiceAccordionStyles>
+  )
 }
 
 export const ServiceAccordionSummary = ({ children }) => {
   return (
-    <ServiceAccordionSummaryStyles expanded={true} expandIcon={<CustomExpandMoreIconStyles />}>
+    <ServiceAccordionSummaryStyles expandIcon={<CustomExpandMoreIconStyles />}>
       {children}
     </ServiceAccordionSummaryStyles>
   )

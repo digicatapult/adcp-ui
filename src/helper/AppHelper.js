@@ -39,12 +39,7 @@ export const serviceConnColumns = [
 ]
 
 export const toServicesValid = (id, destId) => {
-  console.log('toServicesValid id, destId', id, destId)
-
-  const result = toServices.find(({ serviceId, toService }) => serviceId === id && toService === destId)
-  console.log('toServicesValid result', result)
-
-  return result
+  return toServices.find(({ serviceId, toService }) => serviceId === id && toService === destId)
 }
 
 export const incompatibilityMatrix = [

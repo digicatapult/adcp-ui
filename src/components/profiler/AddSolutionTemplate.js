@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import styled from '@emotion/styled'
 import uniqid from 'uniqid'
 // import PropTypes from 'prop-types'
@@ -12,7 +12,7 @@ import { FormSelect, ServiceAccordion, ServiceAccordionSummary, Text, SimpleButt
 const AddSolutionTemplate = () => {
   const subNavList = getRegistrationSubNavigation()
 
-  const [expanded] = useState('panel0')
+  // const [expanded] = useState('panel0')
   // TODO replace with profiler API get projects to obtain these selected services...
   const [selectedServices, setSelectedServices] = useState([
     {
@@ -72,31 +72,64 @@ const AddSolutionTemplate = () => {
     },
     {
       id: 10,
-      index: 8,
+      index: 9,
       name: 'Service J',
       solutionServices: [{ index: 0, direction: null, serviceId: null, serviceName: '', status: '', commServices: [] }],
     },
   ])
+  const [expanded, setExpanded] = useState(false)
 
-  useEffect(() => {}, [expanded, selectedServices])
+  // useEffect(() => {}, [selectedServices, expanded])
 
   console.log('RENDER selectedServices', selectedServices)
 
   const commServiceExcludes = (service, direction) => {
     const solutionServiceIncludes = service.solutionServices.reduce((acc, item) => {
-      console.log('**** commServicesAllowed item', item)
-      console.log('**** commServicesAllowed service.id, item.serviceId', service.id, item.serviceId)
-      console.log('**** commServicesAllowed direction, item.direction', direction, item.direction)
-
       if (service.id !== item.serviceId && item.serviceId && item.direction && item.direction === direction) {
         acc.push(item.serviceId)
       }
       return acc
     }, [])
 
-    console.log('**** commServicesAllowed solutionServiceIncludes', solutionServiceIncludes)
-
     return solutionServiceIncludes
+  }
+
+  // need to reduce instead of filter wip...
+  const resetServiceComms = (selectedService, solutionServiceId) => {
+    const selectedServiceSolutionSerivcesUpdated = selectedService.solutionServices.filter((solutionService) => {
+      if (solutionService.serviceId !== solutionServiceId) {
+        solutionService.commServices = serviceCommsFilter(selectedService, '')
+
+        return solutionService
+      }
+    })
+
+    selectedService.solutionServices = selectedServiceSolutionSerivcesUpdated
+
+    const selectedServicesUpdated = selectedServices.filter((item) => {
+      if (item.id === selectedService.id) {
+        item = selectedService
+      }
+
+      return item
+    })
+
+    setSelectedServices(selectedServicesUpdated)
+  }
+
+  const serviceCommsFilter = (selectedService, direction) => {
+    const commServices = commServiceExcludes(selectedService, direction)
+
+    return selectedServices.reduce((acc, item) => {
+      if (
+        (commServices.length > 0 && !commServices.includes(item.id) && selectedService.id !== item.id) ||
+        (selectedService.id !== item.id && !commServices.includes(item.id))
+      ) {
+        acc.push({ id: item.id, name: item.name, index: item.index })
+      }
+
+      return acc
+    }, [])
   }
 
   const directionHandler = (e, serviceId, solutionServiceIndex) => {
@@ -106,7 +139,6 @@ const AddSolutionTemplate = () => {
     const selectedService = selectedServices.find((item) => {
       if (item.id === serviceId) return item
     })
-    console.log('directionHandler selectedService', selectedService)
 
     let selectedSolutionServicesUpdate = []
 
@@ -114,40 +146,15 @@ const AddSolutionTemplate = () => {
     selectedSolutionServicesUpdate = selectedService.solutionServices.filter((item) => {
       if (item.index === solutionServiceIndex) {
         item.direction = direction
-
-        console.log('directionHandler item', item)
-
-        // TODO this function call should return solution services already excluded
-        //  if no solution services have been excluded, then it's a first run and should return all except selectedService.id
-        const commServices = commServiceExcludes(selectedService, direction)
-        console.log('****  **** directionHandler commServices', commServices)
-
-        // TODO cleanup...
-        item.commServices =
-          commServices && commServices.length > 0
-            ? selectedServices.reduce((acc, item3) => {
-                if (serviceId !== item3.id && !commServices.includes(item3.id)) {
-                  acc.push({ id: item3.id, name: item3.name, index: item3.index })
-                }
-
-                return acc
-              }, [])
-            : selectedServices.reduce((acc, item3) => {
-                if (serviceId !== item3.id) {
-                  acc.push({ id: item3.id, name: item3.name, index: item3.index })
-                }
-
-                return acc
-              }, [])
+        item.commServices = serviceCommsFilter(selectedService, direction)
       }
       return item
     })
-    console.log('directionHandler selectedSolutionServicesUpdate', selectedSolutionServicesUpdate)
 
     selectedService.solutionServices = selectedSolutionServicesUpdate
 
-    const commServices = commServiceExcludes(selectedService, direction)
-    console.log('****  **** ****  **** directionHandler commServices', commServices)
+    // const commServices = commServiceExcludes(selectedService, direction)
+    // console.log('****  **** ****  **** directionHandler commServices', commServices)
 
     // update state
     const selectedServicesUpdate = selectedServices.filter((item) => {
@@ -190,7 +197,6 @@ const AddSolutionTemplate = () => {
 
       return item
     })
-    // console.log('solutionServicesUpdate', solutionServicesUpdate)
 
     const selectedServicesUpdate = selectedServices.map((item) => {
       if (item.id === service.id) {
@@ -199,95 +205,47 @@ const AddSolutionTemplate = () => {
 
       return item
     })
-    // console.log('selectedServicesUpdate', selectedServicesUpdate)
 
     setSelectedServices(selectedServicesUpdate)
-
-    // console.log('incompatibilityMatrix', incompatibilityMatrix)
   }
 
-  const addRowHandler = (e) => {
-    // console.log('addRowHandler e.target.name', e.target.name)
-    // console.log('addRowHandler e.target.value', e.target.value)
-
-    const { name } = e.target
-
-    if (name === '0') {
-      console.log('ADD ONLY')
-
-      const selectedService = selectedServices.find((item) => {
-        if (item.index === parseInt(name, 10)) {
-          return item
-        }
-      })
-      // console.log('addRowHandler selectedService', selectedService)
-
-      const solutionServicesUpdated = selectedService.solutionServices.concat([
-        {
-          index: selectedService.solutionServices.length,
-          direction: null,
-          serviceId: null,
-          serviceName: '',
-          status: '',
-          commServices: [],
-        },
-      ])
-      // console.log('addRowHandler solutionServicesUpdated', solutionServicesUpdated)
-
-      selectedService.solutionServices = solutionServicesUpdated
-
-      const selectedServicesUpdated = selectedServices.map((item) => {
-        if (item.index === selectedService.index) {
-          item.solutionServices = solutionServicesUpdated
-        }
-
+  const addRowHandler = (e, selectedServiceIndex) => {
+    const selectedService = selectedServices.find((item) => {
+      if (item.index === selectedServiceIndex) {
         return item
-      })
-      // console.log('addRowHandler selectedServicesUpdated', selectedServicesUpdated)
+      }
+    })
 
-      setSelectedServices(selectedServicesUpdated)
-    } else {
-      console.log('ADD OR REMOVE')
-    }
+    const solutionServicesUpdated = selectedService.solutionServices.concat([
+      {
+        index: selectedService.solutionServices.length,
+        direction: null,
+        serviceId: null,
+        serviceName: '',
+        status: '',
+        commServices: [],
+      },
+    ])
+
+    selectedService.solutionServices = solutionServicesUpdated
+
+    const selectedServicesUpdated = selectedServices.map((item) => {
+      if (item.index === selectedServiceIndex) {
+        item.solutionServices = solutionServicesUpdated
+      }
+
+      return item
+    })
+
+    setSelectedServices(selectedServicesUpdated)
   }
 
-  const removeRowHandler = (e) => {
-    // console.log('removeRowHandler e.target.name', e.target.name)
-    // console.log('removeRowHandler e.target.value', e.target.value)
+  const removeRowHandler = (e, selectedService, solutionServiceId) => {
+    resetServiceComms(selectedService, solutionServiceId)
+  }
 
-    const { name: selectedServiceIndex, value: solutionServiceIndex } = e.target
-
-    if (solutionServiceIndex !== '0') {
-      console.log('REMOVE ONLY')
-
-      const selectedService = selectedServices.find((item) => {
-        if (item.index === parseInt(selectedServiceIndex, 10)) {
-          return item
-        }
-      })
-      // console.log('addRowHandler selectedService', selectedService)
-
-      const solutionServicesUpdated = selectedService.solutionServices.filter((item) => {
-        if (item.index !== solutionServiceIndex) {
-          return item
-        }
-      })
-      // console.log('addRowHandler solutionServicesUpdated', solutionServicesUpdated)
-
-      selectedService.solutionServices = solutionServicesUpdated
-
-      const selectedServicesUpdated = selectedServices.map((item) => {
-        if (item.id === selectedService.id) {
-          item = solutionServicesUpdated
-        }
-
-        return item
-      })
-
-      setSelectedServices(selectedServicesUpdated)
-    } else {
-      console.log('REMOVE EQUAL TO 1')
-    }
+  const accordionPanelOnChangeHandler = (panel) => (e, isExpanded) => {
+    setExpanded(isExpanded ? panel : false)
   }
 
   console.log('selectedServices', selectedServices)
@@ -296,16 +254,18 @@ const AddSolutionTemplate = () => {
     <Wrapper>
       <SubNavigation subNavList={subNavList} />
       <Content>
-        {selectedServices.map((selectedService) => (
-          <ServiceAccordion key={uniqid()} expanded={true}>
-            <ServiceAccordionSummary
-              aria-controls={`panel-${selectedService.index}`}
-              id={`panel-${selectedService.index}`}
-            >
+        {selectedServices.map((selectedService, index) => (
+          <ServiceAccordion
+            key={uniqid()}
+            id={`panel${index}`}
+            expanded={expanded === `panel${index}`}
+            onChangeHandler={accordionPanelOnChangeHandler(`panel${index}`)}
+          >
+            <ServiceAccordionSummary aria-controls={`panel-${selectedService.index}`}>
               <Typography>{selectedService.name}</Typography>
             </ServiceAccordionSummary>
             <AccordionDetails>
-              {selectedService.solutionServices.map((solutionService) => (
+              {selectedService.solutionServices?.map((solutionService, solutionServiceIndex) => (
                 <ServiceDependencyRowWrapper key={uniqid()}>
                   <ServiceDirectionColumn>
                     <FormControl>
@@ -329,12 +289,10 @@ const AddSolutionTemplate = () => {
                   <ServiceDependencyColumn>
                     <FormControl>
                       <FormSelect
-                        // name={`commService-${solutionService.index}`}
                         onChangeHandler={(event) =>
                           solutionServiceHandler(event, selectedService, solutionService.index)
                         }
                         defaultValue="Select Comm Service"
-                        // value="Select Comm Service"
                         value={solutionService.serviceId || 'Select Comm Service'}
                         // disabled={!solutionService.serviceId}
                       >
@@ -362,26 +320,21 @@ const AddSolutionTemplate = () => {
                     <SimpleButton
                       variant="contained"
                       type="button"
-                      name={selectedService.index}
-                      value={solutionService.index}
-                      onClickHandler={addRowHandler}
+                      onClickHandler={(e) => addRowHandler(e, selectedService.index, solutionService.index)}
                       disabled={!solutionService.serviceId}
                       styles={{ width: '150px', height: '32px' }}
                     >
                       Add Row
                     </SimpleButton>
-                    {solutionService.index > 0 && (
-                      <SimpleButton
-                        variant="contained"
-                        type="button"
-                        name={selectedService.index}
-                        value={solutionService.index}
-                        onClickHandler={removeRowHandler}
-                        styles={{ width: '150px', height: '32px' }}
-                      >
-                        Remove Row
-                      </SimpleButton>
-                    )}
+                    <SimpleButton
+                      variant="contained"
+                      type="button"
+                      onClickHandler={(e) => removeRowHandler(e, selectedService, solutionService.serviceId)}
+                      disabled={solutionServiceIndex === 0}
+                      styles={{ width: '150px', height: '32px' }}
+                    >
+                      Remove Row
+                    </SimpleButton>
                   </ServiceDependencyRowControl>
                 </ServiceDependencyRowWrapper>
               ))}
